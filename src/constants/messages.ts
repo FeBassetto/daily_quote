@@ -20,6 +20,9 @@ export const ERROR_MESSAGES = {
   INVALID_CREDENTIALS: "Usuário ou senha incorretos",
   NETWORK_ERROR: "Erro de conexão. Verifique sua internet e tente novamente",
   GENERIC_ERROR: "Algo deu errado. Tente novamente",
+  QUOTE_LOAD_ERROR: "Não foi possível carregar a frase do dia",
+  QUOTE_COPY_ERROR: "Não foi possível copiar a frase",
+  QUOTE_SHARE_ERROR: "Não foi possível compartilhar a frase",
 } as const;
 
 export const SUCCESS_MESSAGES = {
@@ -27,6 +30,7 @@ export const SUCCESS_MESSAGES = {
   LOGOUT_SUCCESS: "Até a próxima!",
   WELCOME: "Bem-vindo!",
   LOGOUT_TITLE: "Logout realizado",
+  QUOTE_COPIED: "Frase copiada!",
 } as const;
 
 export const CONFIRMATION_MESSAGES = {

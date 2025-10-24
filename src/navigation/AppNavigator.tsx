@@ -1,7 +1,7 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useAuth } from "../hooks/useAuth";
-import { HomeScreen } from "../screens/Home/Home";
+import { DailyQuoteScreen } from "../screens/DailyQuote/DailyQuote";
 import { LoginScreen } from "../screens/Login/Login";
 
 export type AuthStackParamList = {
@@ -9,7 +9,7 @@ export type AuthStackParamList = {
 };
 
 export type AppStackParamList = {
-  Home: undefined;
+  DailyQuote: undefined;
 };
 
 const AuthStack = createNativeStackNavigator<AuthStackParamList>();
@@ -31,7 +31,7 @@ const AppNavigatorStack = () => (
       headerShown: false,
     }}
   >
-    <AppStack.Screen name="Home" component={HomeScreen} />
+    <AppStack.Screen name="DailyQuote" component={DailyQuoteScreen} />
   </AppStack.Navigator>
 );
 

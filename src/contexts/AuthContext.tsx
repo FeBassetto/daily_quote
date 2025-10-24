@@ -1,20 +1,22 @@
+import { createContext, type ReactNode, useCallback, useEffect, useState } from "react";
 import RNBootSplash from "react-native-bootsplash";
 import * as Keychain from "react-native-keychain";
-import { createContext, type ReactNode, useCallback, useEffect, useState } from "react";
 
 const TOKEN_SERVICE = "auth_token";
 
 interface AuthContextData {
   token: string | null;
+  username: string | null;
   isLoading: boolean;
   isAuthenticated: boolean;
   isTransitioning: boolean;
-  signIn: (token: string) => Promise<void>;
+  signIn: (token: string, username: string) => Promise<void>;
   signOut: () => Promise<void>;
 }
 
 export const AuthContext = createContext<AuthContextData>({
   token: null,
+  username: null,
   isLoading: true,
   isAuthenticated: false,
   isTransitioning: false,
@@ -32,20 +34,26 @@ interface AuthProviderProps {
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [token, setTokenState] = useState<string | null>(null);
+  const [username, setUsernameState] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isTransitioning, setIsTransitioning] = useState(false);
 
   useEffect(() => {
     const loadStoredAuth = async () => {
       try {
-        const credentials = await Keychain.getGenericPassword({ service: TOKEN_SERVICE });
+        const credentials = await Keychain.getGenericPassword({
+          service: TOKEN_SERVICE,
+        });
         if (credentials) {
           setTokenState(credentials.password);
+          setUsernameState(credentials.username);
         } else {
           setTokenState(null);
+          setUsernameState(null);
         }
       } catch {
         setTokenState(null);
+        setUsernameState(null);
       } finally {
         setIsLoading(false);
       }
@@ -62,14 +70,15 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
   }, [isLoading]);
 
-  const signIn = useCallback(async (newToken: string) => {
+  const signIn = useCallback(async (newToken: string, newUsername: string) => {
     try {
       setIsTransitioning(true);
-      await Keychain.setGenericPassword(TOKEN_SERVICE, newToken, {
+      await Keychain.setGenericPassword(newUsername, newToken, {
         service: TOKEN_SERVICE,
         accessible: Keychain.ACCESSIBLE.WHEN_UNLOCKED,
       });
       setTokenState(newToken);
+      setUsernameState(newUsername);
       setIsTransitioning(false);
     } catch (error) {
       setIsTransitioning(false);
@@ -82,6 +91,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       setIsTransitioning(true);
       await Keychain.resetGenericPassword({ service: TOKEN_SERVICE });
       setTokenState(null);
+      setUsernameState(null);
       setIsTransitioning(false);
     } catch (error) {
       setIsTransitioning(false);
@@ -91,6 +101,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const value: AuthContextData = {
     token,
+    username,
     isLoading,
     isAuthenticated: !!token,
     isTransitioning,

@@ -1,11 +1,15 @@
+import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Button } from "../../components/Button/Button";
 import { colors } from "../../constants/theme";
 import { useAuth } from "../../hooks/useAuth";
+import type { AppStackParamList } from "../../navigation/AppNavigator";
 import { showErrorToast } from "../../utils/errorHandler";
 
-export const HomeScreen = () => {
+type HomeScreenProps = NativeStackScreenProps<AppStackParamList, "Home">;
+
+export const HomeScreen = ({ navigation }: HomeScreenProps) => {
   const { signOut } = useAuth();
 
   const handleLogout = async () => {
@@ -22,11 +26,11 @@ export const HomeScreen = () => {
         <Text style={styles.title}>Bem-vindo!</Text>
         <Text style={styles.subtitle}>Você está autenticado</Text>
         <Button
-          title="Sair"
-          variant="outline"
-          onPress={handleLogout}
+          title="Ver Frase do Dia"
+          onPress={() => navigation.navigate("DailyQuote")}
           style={styles.button}
         />
+        <Button title="Sair" variant="outline" onPress={handleLogout} style={styles.button} />
       </View>
     </SafeAreaView>
   );
