@@ -3,6 +3,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Button } from "../../components/Button/Button";
 import { colors } from "../../constants/theme";
 import { useAuth } from "../../hooks/useAuth";
+import { showErrorToast } from "../../utils/errorHandler";
 
 export const HomeScreen = () => {
   const { signOut } = useAuth();
@@ -11,7 +12,7 @@ export const HomeScreen = () => {
     try {
       await signOut();
     } catch (error) {
-      // TODO: Add error handling/toast notification
+      showErrorToast("Não foi possível fazer logout. Tente novamente.");
     }
   };
 
