@@ -1,10 +1,8 @@
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { ActivityIndicator, StyleSheet, View } from 'react-native';
-import { colors } from '../constants/theme';
-import { useAuth } from '../hooks/useAuth';
-import { HomeScreen } from '../screens/Home/Home';
-import { LoginScreen } from '../screens/Login/Login';
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { useAuth } from "../hooks/useAuth";
+import { HomeScreen } from "../screens/Home/Home";
+import { LoginScreen } from "../screens/Login/Login";
 
 export type AuthStackParamList = {
   Login: undefined;
@@ -38,15 +36,7 @@ const AppNavigatorStack = () => (
 );
 
 export const AppNavigator = () => {
-  const { isAuthenticated, isLoading } = useAuth();
-
-  if (isLoading) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color={colors.primary} />
-      </View>
-    );
-  }
+  const { isAuthenticated } = useAuth();
 
   return (
     <NavigationContainer>
@@ -54,12 +44,3 @@ export const AppNavigator = () => {
     </NavigationContainer>
   );
 };
-
-const styles = StyleSheet.create({
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: colors.background,
-  },
-});

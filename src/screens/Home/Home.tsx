@@ -11,7 +11,7 @@ export const HomeScreen = () => {
     try {
       await signOut();
     } catch (error) {
-      console.error("Logout error:", error);
+      // TODO: Add error handling/toast notification
     }
   };
 
