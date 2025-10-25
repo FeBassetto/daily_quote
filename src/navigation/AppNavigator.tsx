@@ -1,46 +1,42 @@
+import { useAuth } from "@hooks/useAuth";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { useAuth } from "../hooks/useAuth";
-import { HomeScreen } from "../screens/Home/Home";
-import { LoginScreen } from "../screens/Login/Login";
+import { DailyQuoteScreen } from "@screens/DailyQuote/DailyQuote";
+import { LoginScreen } from "@screens/Login/Login";
 
-export type AuthStackParamList = {
+type RootStackParamList = {
   Login: undefined;
+  DailyQuote: undefined;
 };
 
-export type AppStackParamList = {
-  Home: undefined;
+const Stack = createNativeStackNavigator<RootStackParamList>();
+
+const linking = {
+  prefixes: ["dailyquote://"],
+  config: {
+    screens: {
+      DailyQuote: "quoteoftheDay",
+      Login: "login",
+    },
+  },
 };
-
-const AuthStack = createNativeStackNavigator<AuthStackParamList>();
-const AppStack = createNativeStackNavigator<AppStackParamList>();
-
-const AuthNavigator = () => (
-  <AuthStack.Navigator
-    screenOptions={{
-      headerShown: false,
-    }}
-  >
-    <AuthStack.Screen name="Login" component={LoginScreen} />
-  </AuthStack.Navigator>
-);
-
-const AppNavigatorStack = () => (
-  <AppStack.Navigator
-    screenOptions={{
-      headerShown: false,
-    }}
-  >
-    <AppStack.Screen name="Home" component={HomeScreen} />
-  </AppStack.Navigator>
-);
 
 export const AppNavigator = () => {
   const { isAuthenticated } = useAuth();
 
   return (
-    <NavigationContainer>
-      {isAuthenticated ? <AppNavigatorStack /> : <AuthNavigator />}
+    <NavigationContainer linking={linking}>
+      <Stack.Navigator
+        screenOptions={{
+          headerShown: false,
+        }}
+      >
+        {isAuthenticated ? (
+          <Stack.Screen name="DailyQuote" component={DailyQuoteScreen} />
+        ) : (
+          <Stack.Screen name="Login" component={LoginScreen} />
+        )}
+      </Stack.Navigator>
     </NavigationContainer>
   );
 };

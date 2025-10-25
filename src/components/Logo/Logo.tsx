@@ -1,5 +1,5 @@
+import LogoSvg from "@assets/images/logo.svg";
 import type { ViewStyle } from "react-native";
-import LogoSvg from "../../assets/images/logo.svg";
 
 interface LogoProps {
   size?: "small" | "medium" | "large";

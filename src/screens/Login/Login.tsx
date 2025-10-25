@@ -1,7 +1,21 @@
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Eye, EyeOff, Lock, User } from 'lucide-react-native';
-import { useState } from 'react';
-import { Controller, useForm } from 'react-hook-form';
+import { Button } from "@components/Button/Button";
+import { Input } from "@components/Input/Input";
+import { Logo } from "@components/Logo/Logo";
+import {
+  AUTH_MESSAGES,
+  ERROR_MESSAGES,
+  FORM_PLACEHOLDERS,
+  SUCCESS_MESSAGES,
+} from "@constants/messages";
+import { colors } from "@constants/theme";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useAuth } from "@hooks/useAuth";
+import { authAPI } from "@services/auth";
+import { showErrorToast, showSuccessToast } from "@utils/errorHandler";
+import { type LoginFormData, loginSchema } from "@utils/loginValidation";
+import { Eye, EyeOff, Lock, User } from "lucide-react-native";
+import { useState } from "react";
+import { Controller, useForm } from "react-hook-form";
 import {
   KeyboardAvoidingView,
   Platform,
@@ -10,24 +24,10 @@ import {
   Text,
   TouchableOpacity,
   View,
-} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Button } from '../../components/Button/Button';
-import { Input } from '../../components/Input/Input';
-import { LoginFooter } from '../../components/LoginFooter/LoginFooter';
-import { Logo } from '../../components/Logo/Logo';
-import {
-  AUTH_MESSAGES,
-  ERROR_MESSAGES,
-  FORM_PLACEHOLDERS,
-  SUCCESS_MESSAGES,
-} from '../../constants/messages';
-import { colors } from '../../constants/theme';
-import { useAuth } from '../../hooks/useAuth';
-import { authAPI } from '../../services/auth';
-import { showErrorToast, showSuccessToast } from '../../utils/errorHandler';
-import { type LoginFormData, loginSchema } from '../../utils/loginValidation';
-import { styles } from './styles.login';
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { LoginFooter } from "./components/LoginFooter/LoginFooter";
+import { styles } from "./styles.login";
 
 export const LoginScreen = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -39,10 +39,10 @@ export const LoginScreen = () => {
     formState: { isSubmitting },
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
-    mode: 'onBlur',
+    mode: "onSubmit",
     defaultValues: {
-      username: '',
-      password: '',
+      username: "",
+      password: "",
     },
   });
 
@@ -51,16 +51,13 @@ export const LoginScreen = () => {
       const response = await authAPI.login(data);
 
       if (response.token) {
-        await signIn(response.token);
-        showSuccessToast(
-          SUCCESS_MESSAGES.LOGIN_SUCCESS,
-          SUCCESS_MESSAGES.WELCOME,
-        );
+        await signIn(response.token, data.username);
+        showSuccessToast(SUCCESS_MESSAGES.LOGIN_SUCCESS, SUCCESS_MESSAGES.WELCOME);
       } else {
-        showErrorToast(ERROR_MESSAGES.INVALID_CREDENTIALS, 'Erro no Login');
+        showErrorToast(ERROR_MESSAGES.INVALID_CREDENTIALS, "Erro no Login");
       }
     } catch {
-      showErrorToast(ERROR_MESSAGES.NETWORK_ERROR, 'Erro no Login');
+      showErrorToast(ERROR_MESSAGES.NETWORK_ERROR, "Erro no Login");
     }
   };
 
@@ -69,11 +66,11 @@ export const LoginScreen = () => {
   const handleForgotPassword = () => {};
 
   return (
-    <SafeAreaView style={styles.safeArea} edges={['top', 'bottom']}>
+    <SafeAreaView style={styles.safeArea} edges={["top", "bottom"]}>
       <StatusBar barStyle="dark-content" />
       <KeyboardAvoidingView
         style={styles.container}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
       >
         <ScrollView
           contentContainerStyle={styles.scrollContent}
@@ -83,19 +80,14 @@ export const LoginScreen = () => {
           <View style={styles.header}>
             <Logo size="large" style={styles.logo} />
             <Text style={styles.title}>{AUTH_MESSAGES.WELCOME_BACK}</Text>
-            <Text style={styles.subtitle}>
-              {AUTH_MESSAGES.WELCOME_SUBTITLE}
-            </Text>
+            <Text style={styles.subtitle}>{AUTH_MESSAGES.WELCOME_SUBTITLE}</Text>
           </View>
 
           <View style={styles.form}>
             <Controller
               control={control}
               name="username"
-              render={({
-                field: { onChange, onBlur, value },
-                fieldState: { error },
-              }) => (
+              render={({ field: { onChange, onBlur, value }, fieldState: { error } }) => (
                 <Input
                   value={value}
                   onChangeText={onChange}
@@ -114,10 +106,7 @@ export const LoginScreen = () => {
             <Controller
               control={control}
               name="password"
-              render={({
-                field: { onChange, onBlur, value },
-                fieldState: { error },
-              }) => (
+              render={({ field: { onChange, onBlur, value }, fieldState: { error } }) => (
                 <Input
                   value={value}
                   onChangeText={onChange}
@@ -153,9 +142,7 @@ export const LoginScreen = () => {
               activeOpacity={0.7}
               onPress={handleForgotPassword}
             >
-              <Text style={styles.forgotPasswordText}>
-                {AUTH_MESSAGES.FORGOT_PASSWORD}
-              </Text>
+              <Text style={styles.forgotPasswordText}>{AUTH_MESSAGES.FORGOT_PASSWORD}</Text>
             </TouchableOpacity>
 
             <Button
