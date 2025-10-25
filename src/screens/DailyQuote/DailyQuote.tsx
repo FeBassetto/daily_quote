@@ -43,14 +43,13 @@ export const DailyQuoteScreen = () => {
     onPreload: () => addNewQuotes(BUFFER_SIZE),
   });
 
-  const { handleCopy, handleShare, handleRefresh, isActionLoading } =
-    useQuoteActions({
-      quotes,
-      currentIndex,
-      isSwiping,
-      swiperRef,
-      onSwipingChange: handleSwiping,
-    });
+  const { handleCopy, handleShare, handleRefresh, isActionLoading } = useQuoteActions({
+    quotes,
+    currentIndex,
+    isSwiping,
+    swiperRef,
+    onSwipingChange: handleSwiping,
+  });
 
   const currentQuote = quotes[currentIndex];
   const isCurrentCardLoading = currentQuote?.loading || !currentQuote?.text;
@@ -60,10 +59,7 @@ export const DailyQuoteScreen = () => {
   if (initialLoading) {
     return (
       <SafeAreaView style={styles.container} edges={["bottom"]}>
-        <Header
-          username={username || undefined}
-          simulateError={simulateError}
-        />
+        <Header username={username || undefined} simulateError={simulateError} />
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={colors.primary} />
           <Text style={styles.loadingText}>Carregando suas frases...</Text>
@@ -75,10 +71,7 @@ export const DailyQuoteScreen = () => {
   if (quotes.length === 0) {
     return (
       <SafeAreaView style={styles.container} edges={["bottom"]}>
-        <Header
-          username={username || undefined}
-          simulateError={simulateError}
-        />
+        <Header username={username || undefined} simulateError={simulateError} />
         <ErrorState onRetry={() => addNewQuotes(BUFFER_SIZE)} />
       </SafeAreaView>
     );

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { InteractionManager, AppState } from "react-native";
+import { AppState } from "react-native";
 import ReactNativeHapticFeedback from "react-native-haptic-feedback";
 
 const SWIPE_ANIMATION_DURATION = 500;
@@ -54,7 +54,7 @@ export const useSwipeManager = ({
 
     ReactNativeHapticFeedback.trigger("impactLight");
 
-    InteractionManager.runAfterInteractions(() => {
+    requestIdleCallback(() => {
       onIndexChange(index + 1);
 
       if (shouldPreload(index)) {

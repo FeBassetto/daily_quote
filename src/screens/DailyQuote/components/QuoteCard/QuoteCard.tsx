@@ -43,6 +43,5 @@ const QuoteCardComponent = ({ card }: QuoteCardProps) => {
 export const QuoteCard = memo(
   QuoteCardComponent,
   (prevProps, nextProps) =>
-    prevProps.card.id === nextProps.card.id &&
-    prevProps.card.loading === nextProps.card.loading
+    prevProps.card.id === nextProps.card.id && prevProps.card.loading === nextProps.card.loading,
 );

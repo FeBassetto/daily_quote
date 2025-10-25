@@ -47,9 +47,7 @@ export const Header = ({ username = "Usuário", simulateError }: HeaderProps) =>
       await api.get("/18a8a172-0c9e-4dc3-9cf0-fe2c389e27eb/frasedodia", {
         headers: { token: "testeTokenInvalido" },
       });
-    } catch (error) {
-      console.log("Erro capturado (esperado):", error);
-    }
+    } catch {}
   };
 
   const handleTestError = () => {

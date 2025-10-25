@@ -12,9 +12,27 @@ export const showErrorToast = (message: string, customTitle?: string) => {
   });
 };
 
-export const showSuccessToast = (message: string, title: string = "Sucesso") => {
+export const showSuccessToast = (
+  message: string,
+  title: string = "Sucesso"
+) => {
   Toast.show({
     type: "success",
+    text1: title,
+    text2: message,
+    position: "top",
+    visibilityTime: 3000,
+    autoHide: true,
+    topOffset: 60,
+  });
+};
+
+export const showInfoToast = (
+  message: string,
+  title: string = "Informação"
+) => {
+  Toast.show({
+    type: "info",
     text1: title,
     text2: message,
     position: "top",

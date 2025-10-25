@@ -7,7 +7,10 @@ interface LoginFooterProps {
   onPrivacyPress?: () => void;
 }
 
-export const LoginFooter = ({ onTermsPress, onPrivacyPress }: LoginFooterProps) => {
+export const LoginFooter = ({
+  onTermsPress,
+  onPrivacyPress,
+}: LoginFooterProps) => {
   const handleTermsPress = () => {
     onTermsPress?.();
   };
