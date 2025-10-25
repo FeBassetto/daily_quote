@@ -10,6 +10,7 @@ interface QuoteSwiperProps {
   quotes: QuoteCardType[];
   onSwiped: (index: number) => void;
   onSwiping: () => void;
+  onSwipedAborted: () => void;
   canSwipe: boolean;
 }
 
@@ -18,6 +19,7 @@ export const QuoteSwiper = ({
   quotes,
   onSwiped,
   onSwiping,
+  onSwipedAborted,
   canSwipe,
 }: QuoteSwiperProps) => {
   return (
@@ -26,22 +28,24 @@ export const QuoteSwiper = ({
         ref={swiperRef as React.Ref<Swiper<QuoteCardType>>}
         cards={quotes}
         renderCard={(card) => <QuoteCard card={card} />}
+        keyExtractor={(card) => card.id}
         onSwiped={onSwiped}
         onSwiping={onSwiping}
+        onSwipedAborted={onSwipedAborted}
         backgroundColor="transparent"
         stackSize={3}
         stackScale={10}
         stackSeparation={14}
         infinite
         showSecondCard
-        animateCardOpacity
+        animateCardOpacity={false}
         verticalSwipe={false}
         horizontalSwipe={canSwipe}
         disableBottomSwipe
         disableTopSwipe
         cardVerticalMargin={0}
         cardHorizontalMargin={20}
-        useViewOverflow={false}
+        useViewOverflow={true}
         animateOverlayLabelsOpacity={false}
         containerStyle={styles.innerContainer}
       />

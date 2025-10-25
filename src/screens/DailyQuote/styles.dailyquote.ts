@@ -14,7 +14,6 @@ export const styles = StyleSheet.create({
   bottomSection: {
     backgroundColor: colors.background,
     zIndex: 10,
-    elevation: 10,
   },
   loadingContainer: {
     flex: 1,
@@ -40,5 +39,6 @@ export const styles = StyleSheet.create({
     textAlign: "center",
     marginTop: spacing.md,
     fontWeight: fontWeight.regular,
+    backgroundColor: colors.background,
   },
 });

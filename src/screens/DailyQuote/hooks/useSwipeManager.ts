@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from "react";
+import { AppState } from "react-native";
 import ReactNativeHapticFeedback from "react-native-haptic-feedback";
 
 const SWIPE_ANIMATION_DURATION = 500;
-const SWIPE_COOLDOWN = 800;
 
 interface UseSwipeManagerParams {
   onIndexChange: (newIndex: number) => void;
@@ -12,8 +12,10 @@ interface UseSwipeManagerParams {
 
 interface UseSwipeManagerReturn {
   isSwiping: boolean;
+  canSwipe: boolean;
   handleSwiped: (index: number) => void;
   handleSwiping: () => void;
+  handleSwipeAborted: () => void;
 }
 
 export const useSwipeManager = ({
@@ -22,32 +24,43 @@ export const useSwipeManager = ({
   onPreload,
 }: UseSwipeManagerParams): UseSwipeManagerReturn => {
   const [isSwiping, setIsSwiping] = useState(false);
+  const [canSwipe, setCanSwipe] = useState(true);
   const swipeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const lastSwipeTimeRef = useRef<number>(0);
 
   useEffect(() => {
+    const subscription = AppState.addEventListener("change", (nextAppState) => {
+      if (nextAppState === "active" && isSwiping) {
+        setIsSwiping(false);
+        setCanSwipe(true);
+        if (swipeTimeoutRef.current) {
+          clearTimeout(swipeTimeoutRef.current);
+        }
+      }
+    });
+
     return () => {
+      subscription.remove();
       if (swipeTimeoutRef.current) {
         clearTimeout(swipeTimeoutRef.current);
       }
     };
-  }, []);
+  }, [isSwiping]);
 
   const handleSwiped = (index: number) => {
-    const now = Date.now();
-    const timeSinceLastSwipe = now - lastSwipeTimeRef.current;
+    if (!canSwipe) return;
 
-    if (timeSinceLastSwipe < SWIPE_COOLDOWN) return;
-
-    lastSwipeTimeRef.current = now;
     setIsSwiping(true);
+    setCanSwipe(false);
 
     ReactNativeHapticFeedback.trigger("impactLight");
-    onIndexChange(index + 1);
 
-    if (shouldPreload(index)) {
-      onPreload();
-    }
+    requestIdleCallback(() => {
+      onIndexChange(index + 1);
+
+      if (shouldPreload(index)) {
+        onPreload();
+      }
+    });
 
     if (swipeTimeoutRef.current) {
       clearTimeout(swipeTimeoutRef.current);
@@ -55,16 +68,30 @@ export const useSwipeManager = ({
 
     swipeTimeoutRef.current = setTimeout(() => {
       setIsSwiping(false);
+      setCanSwipe(true);
     }, SWIPE_ANIMATION_DURATION);
   };
 
   const handleSwiping = () => {
+    if (swipeTimeoutRef.current) {
+      clearTimeout(swipeTimeoutRef.current);
+    }
     setIsSwiping(true);
+  };
+
+  const handleSwipeAborted = () => {
+    if (swipeTimeoutRef.current) {
+      clearTimeout(swipeTimeoutRef.current);
+    }
+    setIsSwiping(false);
+    setCanSwipe(true);
   };
 
   return {
     isSwiping,
+    canSwipe,
     handleSwiped,
     handleSwiping,
+    handleSwipeAborted,
   };
 };

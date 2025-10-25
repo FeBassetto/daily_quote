@@ -37,3 +37,8 @@ export const SUCCESS_MESSAGES = {
   LOGOUT_TITLE: "Logout realizado",
   QUOTE_COPIED: "Frase copiada!",
 } as const;
+
+export const INFO_MESSAGES = {
+  COMING_SOON_TITLE: "Em breve",
+  COMING_SOON_MESSAGE: "Esta funcionalidade estará disponível em breve",
+} as const;

@@ -26,6 +26,8 @@ export const Input = ({
   containerStyle,
   style,
   editable = true,
+  onFocus,
+  onBlur,
   ...props
 }: InputProps) => {
   const [isFocused, setIsFocused] = useState(false);
@@ -35,6 +37,16 @@ export const Input = ({
   if (rightIcon) inputStyles.push(styles.inputWithRightIcon);
   if (!editable) inputStyles.push(styles.inputDisabled);
   if (style) inputStyles.push(style as TextStyle);
+
+  const handleFocus: TextInputProps["onFocus"] = (e) => {
+    setIsFocused(true);
+    onFocus?.(e);
+  };
+
+  const handleBlur: TextInputProps["onBlur"] = (e) => {
+    setIsFocused(false);
+    onBlur?.(e);
+  };
 
   return (
     <View style={[styles.container, containerStyle]}>
@@ -53,8 +65,8 @@ export const Input = ({
         <TextInput
           style={inputStyles}
           placeholderTextColor={colors.text.tertiary}
-          onFocus={() => setIsFocused(true)}
-          onBlur={() => setIsFocused(false)}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
           editable={editable}
           {...props}
         />

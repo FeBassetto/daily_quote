@@ -31,7 +31,13 @@ export const DailyQuoteScreen = () => {
     simulateError,
   } = useQuoteManager();
 
-  const { isSwiping, handleSwiped, handleSwiping } = useSwipeManager({
+  const {
+    isSwiping,
+    canSwipe: canSwipeManager,
+    handleSwiped,
+    handleSwiping,
+    handleSwipeAborted,
+  } = useSwipeManager({
     onIndexChange: setCurrentIndex,
     shouldPreload: shouldPreloadMore,
     onPreload: () => addNewQuotes(BUFFER_SIZE),
@@ -48,7 +54,7 @@ export const DailyQuoteScreen = () => {
   const currentQuote = quotes[currentIndex];
   const isCurrentCardLoading = currentQuote?.loading || !currentQuote?.text;
   const areButtonsDisabled = isCurrentCardLoading || isSwiping;
-  const canSwipe = !isCurrentCardLoading;
+  const canSwipe = !isCurrentCardLoading && canSwipeManager;
 
   if (initialLoading) {
     return (
@@ -81,6 +87,7 @@ export const DailyQuoteScreen = () => {
           quotes={quotes}
           onSwiped={handleSwiped}
           onSwiping={handleSwiping}
+          onSwipedAborted={handleSwipeAborted}
           canSwipe={canSwipe}
         />
 
