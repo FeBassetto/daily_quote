@@ -31,29 +31,39 @@ export const DailyQuoteScreen = () => {
     simulateError,
   } = useQuoteManager();
 
-  const { isSwiping, handleSwiped, handleSwiping } = useSwipeManager({
+  const {
+    isSwiping,
+    canSwipe: canSwipeManager,
+    handleSwiped,
+    handleSwiping,
+    handleSwipeAborted,
+  } = useSwipeManager({
     onIndexChange: setCurrentIndex,
     shouldPreload: shouldPreloadMore,
     onPreload: () => addNewQuotes(BUFFER_SIZE),
   });
 
-  const { handleCopy, handleShare, handleRefresh, isActionLoading } = useQuoteActions({
-    quotes,
-    currentIndex,
-    isSwiping,
-    swiperRef,
-    onSwipingChange: handleSwiping,
-  });
+  const { handleCopy, handleShare, handleRefresh, isActionLoading } =
+    useQuoteActions({
+      quotes,
+      currentIndex,
+      isSwiping,
+      swiperRef,
+      onSwipingChange: handleSwiping,
+    });
 
   const currentQuote = quotes[currentIndex];
   const isCurrentCardLoading = currentQuote?.loading || !currentQuote?.text;
   const areButtonsDisabled = isCurrentCardLoading || isSwiping;
-  const canSwipe = !isCurrentCardLoading;
+  const canSwipe = !isCurrentCardLoading && canSwipeManager;
 
   if (initialLoading) {
     return (
       <SafeAreaView style={styles.container} edges={["bottom"]}>
-        <Header username={username || undefined} simulateError={simulateError} />
+        <Header
+          username={username || undefined}
+          simulateError={simulateError}
+        />
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={colors.primary} />
           <Text style={styles.loadingText}>Carregando suas frases...</Text>
@@ -65,7 +75,10 @@ export const DailyQuoteScreen = () => {
   if (quotes.length === 0) {
     return (
       <SafeAreaView style={styles.container} edges={["bottom"]}>
-        <Header username={username || undefined} simulateError={simulateError} />
+        <Header
+          username={username || undefined}
+          simulateError={simulateError}
+        />
         <ErrorState onRetry={() => addNewQuotes(BUFFER_SIZE)} />
       </SafeAreaView>
     );
@@ -81,6 +94,7 @@ export const DailyQuoteScreen = () => {
           quotes={quotes}
           onSwiped={handleSwiped}
           onSwiping={handleSwiping}
+          onSwipedAborted={handleSwipeAborted}
           canSwipe={canSwipe}
         />
 
