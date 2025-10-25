@@ -12,11 +12,7 @@ import { colors } from "@constants/theme";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAuth } from "@hooks/useAuth";
 import { authAPI } from "@services/auth";
-import {
-  showErrorToast,
-  showInfoToast,
-  showSuccessToast,
-} from "@utils/errorHandler";
+import { showErrorToast, showInfoToast, showSuccessToast } from "@utils/errorHandler";
 import { type LoginFormData, loginSchema } from "@utils/loginValidation";
 import { Eye, EyeOff, Lock, User } from "lucide-react-native";
 import { useState } from "react";
@@ -57,10 +53,7 @@ export const LoginScreen = () => {
 
       if (response.token) {
         await signIn(response.token, data.username);
-        showSuccessToast(
-          SUCCESS_MESSAGES.LOGIN_SUCCESS,
-          SUCCESS_MESSAGES.WELCOME
-        );
+        showSuccessToast(SUCCESS_MESSAGES.LOGIN_SUCCESS, SUCCESS_MESSAGES.WELCOME);
       } else {
         showErrorToast(ERROR_MESSAGES.INVALID_CREDENTIALS, "Erro no Login");
       }
@@ -70,10 +63,7 @@ export const LoginScreen = () => {
   };
 
   const handleComingSoon = () => {
-    showInfoToast(
-      INFO_MESSAGES.COMING_SOON_MESSAGE,
-      INFO_MESSAGES.COMING_SOON_TITLE
-    );
+    showInfoToast(INFO_MESSAGES.COMING_SOON_MESSAGE, INFO_MESSAGES.COMING_SOON_TITLE);
   };
 
   return (
@@ -91,19 +81,14 @@ export const LoginScreen = () => {
           <View style={styles.header}>
             <Logo size="large" style={styles.logo} />
             <Text style={styles.title}>{AUTH_MESSAGES.WELCOME_BACK}</Text>
-            <Text style={styles.subtitle}>
-              {AUTH_MESSAGES.WELCOME_SUBTITLE}
-            </Text>
+            <Text style={styles.subtitle}>{AUTH_MESSAGES.WELCOME_SUBTITLE}</Text>
           </View>
 
           <View style={styles.form}>
             <Controller
               control={control}
               name="username"
-              render={({
-                field: { onChange, onBlur, value },
-                fieldState: { error },
-              }) => (
+              render={({ field: { onChange, onBlur, value }, fieldState: { error } }) => (
                 <Input
                   value={value}
                   onChangeText={onChange}
@@ -122,10 +107,7 @@ export const LoginScreen = () => {
             <Controller
               control={control}
               name="password"
-              render={({
-                field: { onChange, onBlur, value },
-                fieldState: { error },
-              }) => (
+              render={({ field: { onChange, onBlur, value }, fieldState: { error } }) => (
                 <Input
                   value={value}
                   onChangeText={onChange}
@@ -161,9 +143,7 @@ export const LoginScreen = () => {
               activeOpacity={0.7}
               onPress={handleComingSoon}
             >
-              <Text style={styles.forgotPasswordText}>
-                {AUTH_MESSAGES.FORGOT_PASSWORD}
-              </Text>
+              <Text style={styles.forgotPasswordText}>{AUTH_MESSAGES.FORGOT_PASSWORD}</Text>
             </TouchableOpacity>
 
             <Button
@@ -191,10 +171,7 @@ export const LoginScreen = () => {
             />
           </View>
 
-          <LoginFooter
-            onTermsPress={handleComingSoon}
-            onPrivacyPress={handleComingSoon}
-          />
+          <LoginFooter onTermsPress={handleComingSoon} onPrivacyPress={handleComingSoon} />
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
