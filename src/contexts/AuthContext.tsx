@@ -1,25 +1,30 @@
-import { createContext, type ReactNode, useCallback, useEffect, useState } from "react";
+import {
+  createContext,
+  type ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import RNBootSplash from "react-native-bootsplash";
 import * as Keychain from "react-native-keychain";
 
 const TOKEN_SERVICE = "auth_token";
 
 interface AuthContextData {
-  token: string | null;
+  token: string | null | undefined;
   username: string | null;
   isLoading: boolean;
   isAuthenticated: boolean;
-  isTransitioning: boolean;
   signIn: (token: string, username: string) => Promise<void>;
   signOut: () => Promise<void>;
 }
 
 export const AuthContext = createContext<AuthContextData>({
-  token: null,
+  token: undefined,
   username: null,
   isLoading: true,
   isAuthenticated: false,
-  isTransitioning: false,
   signIn: async () => {
     throw new Error("useAuth must be used within AuthProvider");
   },
@@ -33,10 +38,20 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
-  const [token, setTokenState] = useState<string | null>(null);
+  const [token, setTokenState] = useState<string | null | undefined>(undefined);
   const [username, setUsernameState] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isTransitioning, setIsTransitioning] = useState(false);
+
+  const isLoading = token === undefined;
+
+  const clearAuthState = () => {
+    setTokenState(null);
+    setUsernameState(null);
+  };
+
+  const setAuthState = (newToken: string, newUsername: string) => {
+    setTokenState(newToken);
+    setUsernameState(newUsername);
+  };
 
   useEffect(() => {
     const loadStoredAuth = async () => {
@@ -45,17 +60,12 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           service: TOKEN_SERVICE,
         });
         if (credentials) {
-          setTokenState(credentials.password);
-          setUsernameState(credentials.username);
+          setAuthState(credentials.password, credentials.username);
         } else {
-          setTokenState(null);
-          setUsernameState(null);
+          clearAuthState();
         }
       } catch {
-        setTokenState(null);
-        setUsernameState(null);
-      } finally {
-        setIsLoading(false);
+        clearAuthState();
       }
     };
 
@@ -71,43 +81,29 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   }, [isLoading]);
 
   const signIn = useCallback(async (newToken: string, newUsername: string) => {
-    try {
-      setIsTransitioning(true);
-      await Keychain.setGenericPassword(newUsername, newToken, {
-        service: TOKEN_SERVICE,
-        accessible: Keychain.ACCESSIBLE.WHEN_UNLOCKED,
-      });
-      setTokenState(newToken);
-      setUsernameState(newUsername);
-      setIsTransitioning(false);
-    } catch (error) {
-      setIsTransitioning(false);
-      throw error;
-    }
+    await Keychain.setGenericPassword(newUsername, newToken, {
+      service: TOKEN_SERVICE,
+      accessible: Keychain.ACCESSIBLE.WHEN_UNLOCKED,
+    });
+    setAuthState(newToken, newUsername);
   }, []);
 
   const signOut = useCallback(async () => {
-    try {
-      setIsTransitioning(true);
-      await Keychain.resetGenericPassword({ service: TOKEN_SERVICE });
-      setTokenState(null);
-      setUsernameState(null);
-      setIsTransitioning(false);
-    } catch (error) {
-      setIsTransitioning(false);
-      throw error;
-    }
+    await Keychain.resetGenericPassword({ service: TOKEN_SERVICE });
+    clearAuthState();
   }, []);
 
-  const value: AuthContextData = {
-    token,
-    username,
-    isLoading,
-    isAuthenticated: !!token,
-    isTransitioning,
-    signIn,
-    signOut,
-  };
+  const value: AuthContextData = useMemo(
+    () => ({
+      token,
+      username,
+      isLoading,
+      isAuthenticated: !!token,
+      signIn,
+      signOut,
+    }),
+    [token, username, isLoading, signIn, signOut]
+  );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

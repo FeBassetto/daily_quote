@@ -23,6 +23,11 @@ export const ERROR_MESSAGES = {
   QUOTE_LOAD_ERROR: "Não foi possível carregar a frase do dia",
   QUOTE_COPY_ERROR: "Não foi possível copiar a frase",
   QUOTE_SHARE_ERROR: "Não foi possível compartilhar a frase",
+  QUOTE_REFRESH_ERROR: "Não foi possível atualizar a frase",
+  QUOTE_AUTH_ERROR: "Sessão expirada. Faça login novamente",
+  QUOTE_NETWORK_ERROR: "Sem conexão com a internet",
+  QUOTE_TIMEOUT_ERROR: "Servidor demorou muito para responder",
+  QUOTE_SERVER_ERROR: "Erro no servidor. Tente novamente",
 } as const;
 
 export const SUCCESS_MESSAGES = {
@@ -31,11 +36,4 @@ export const SUCCESS_MESSAGES = {
   WELCOME: "Bem-vindo!",
   LOGOUT_TITLE: "Logout realizado",
   QUOTE_COPIED: "Frase copiada!",
-} as const;
-
-export const CONFIRMATION_MESSAGES = {
-  LOGOUT_TITLE: "Sair",
-  LOGOUT_MESSAGE: "Tem certeza que deseja sair?",
-  CANCEL: "Cancelar",
-  CONFIRM_LOGOUT: "Sair",
 } as const;

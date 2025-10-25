@@ -4,11 +4,11 @@ import { useAuth } from "../hooks/useAuth";
 import { DailyQuoteScreen } from "../screens/DailyQuote/DailyQuote";
 import { LoginScreen } from "../screens/Login/Login";
 
-export type AuthStackParamList = {
+type AuthStackParamList = {
   Login: undefined;
 };
 
-export type AppStackParamList = {
+type AppStackParamList = {
   DailyQuote: undefined;
 };
 

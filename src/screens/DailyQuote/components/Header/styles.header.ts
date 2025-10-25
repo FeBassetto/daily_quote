@@ -6,7 +6,7 @@ import {
   fontWeight,
   shadows,
   spacing,
-} from "../../constants/theme";
+} from "../../../../constants/theme";
 
 export const styles = StyleSheet.create({
   header: {

@@ -1,129 +1,73 @@
-import Clipboard from "@react-native-clipboard/clipboard";
-import { Copy, Quote, RefreshCw, Share2 } from "lucide-react-native";
-import { useCallback, useEffect, useState } from "react";
-import {
-  ActivityIndicator,
-  Animated,
-  RefreshControl,
-  ScrollView,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import ReactNativeHapticFeedback from "react-native-haptic-feedback";
+import { Copy, RefreshCw, Share2 } from "lucide-react-native";
+import { useRef } from "react";
+import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import Share from "react-native-share";
-import { Header } from "../../components/Header/Header";
-import { ERROR_MESSAGES, SUCCESS_MESSAGES } from "../../constants/messages";
 import { colors } from "../../constants/theme";
 import { useAuth } from "../../hooks/useAuth";
-import { quoteAPI } from "../../services/quote";
-import { showErrorToast, showSuccessToast } from "../../utils/errorHandler";
+import type { SwiperRef } from "../../types/swiper";
+import { formatDate } from "../../utils/quote";
+import { ActionButton } from "./components/ActionButton/ActionButton";
+import { Header } from "./components/Header/Header";
+import { QuoteSwiper } from "./components/QuoteSwiper/QuoteSwiper";
+import { useQuoteActions } from "./hooks/useQuoteActions";
+import { useQuoteManager } from "./hooks/useQuoteManager";
+import { useSwipeManager } from "./hooks/useSwipeManager";
 import { styles } from "./styles.dailyquote";
 
+const BUFFER_SIZE = 5;
+
 export const DailyQuoteScreen = () => {
-  const [quote, setQuote] = useState<string>("");
-  const [loading, setLoading] = useState(true);
-  const [refreshing, setRefreshing] = useState(false);
-  const [error, setError] = useState(false);
-  const fadeAnim = useState(new Animated.Value(0))[0];
-  const { token, username } = useAuth();
+  const { username } = useAuth();
+  const swiperRef = useRef<SwiperRef | null>(null);
 
-  const fetchQuote = useCallback(async () => {
-    if (!token) {
-      setError(true);
-      setLoading(false);
-      return;
-    }
+  const { quotes, currentIndex, initialLoading, setCurrentIndex, addNewQuotes, shouldPreloadMore } =
+    useQuoteManager();
 
-    try {
-      setError(false);
-      const quoteText = await quoteAPI.getDailyQuote(token);
-      setQuote(quoteText);
+  const { isSwiping, handleSwiped, handleSwiping } = useSwipeManager({
+    onIndexChange: setCurrentIndex,
+    shouldPreload: shouldPreloadMore,
+    onPreload: () => addNewQuotes(BUFFER_SIZE),
+  });
 
-      Animated.timing(fadeAnim, {
-        toValue: 1,
-        duration: 800,
-        useNativeDriver: true,
-      }).start();
-    } catch {
-      setError(true);
-      showErrorToast(ERROR_MESSAGES.QUOTE_LOAD_ERROR);
-    } finally {
-      setLoading(false);
-      setRefreshing(false);
-    }
-  }, [token, fadeAnim]);
+  const { handleCopy, handleShare, handleRefresh, isActionLoading } = useQuoteActions({
+    quotes,
+    currentIndex,
+    isSwiping,
+    swiperRef,
+    onSwipingChange: handleSwiping,
+  });
 
-  useEffect(() => {
-    fetchQuote();
-  }, [fetchQuote]);
+  const currentQuote = quotes[currentIndex];
+  const isCurrentCardLoading = currentQuote?.loading || !currentQuote?.text;
+  const areButtonsDisabled = isCurrentCardLoading || isSwiping;
+  const canSwipe = !isCurrentCardLoading;
 
-  const handleRefresh = useCallback(() => {
-    setRefreshing(true);
-    fadeAnim.setValue(0);
-    fetchQuote();
-    ReactNativeHapticFeedback.trigger("impactLight");
-  }, [fadeAnim, fetchQuote]);
-
-  const handleCopy = useCallback(async () => {
-    if (!quote) return;
-
-    try {
-      Clipboard.setString(quote);
-      showSuccessToast(SUCCESS_MESSAGES.QUOTE_COPIED);
-      ReactNativeHapticFeedback.trigger("notificationSuccess");
-    } catch {
-      showErrorToast(ERROR_MESSAGES.QUOTE_COPY_ERROR);
-    }
-  }, [quote]);
-
-  const handleShare = useCallback(async () => {
-    if (!quote) return;
-
-    try {
-      await Share.open({
-        message: quote,
-      });
-      ReactNativeHapticFeedback.trigger("notificationSuccess");
-    } catch (error: any) {
-      if (error?.message !== "User did not share") {
-        showErrorToast(ERROR_MESSAGES.QUOTE_SHARE_ERROR);
-      }
-    }
-  }, [quote]);
-
-  const formatDate = () => {
-    const date = new Date();
-    return date.toLocaleDateString("pt-BR", {
-      weekday: "long",
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-  };
-
-  if (loading) {
+  if (initialLoading) {
     return (
       <SafeAreaView style={styles.container} edges={["bottom"]}>
         <Header username={username || undefined} />
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={colors.primary} />
-          <Text style={styles.loadingText}>Carregando sua frase...</Text>
+          <Text style={styles.loadingText}>Carregando suas frases...</Text>
         </View>
       </SafeAreaView>
     );
   }
 
-  if (error || !quote) {
+  if (quotes.length === 0) {
     return (
       <SafeAreaView style={styles.container} edges={["bottom"]}>
         <Header username={username || undefined} />
         <View style={styles.errorContainer}>
-          <Text style={styles.errorText}>Não foi possível carregar a frase do dia</Text>
-          <TouchableOpacity style={styles.actionButton} onPress={handleRefresh} activeOpacity={0.7}>
+          <Text style={styles.errorText}>Não foi possível carregar as frases</Text>
+          <TouchableOpacity
+            style={styles.actionButton}
+            onPress={() => addNewQuotes(BUFFER_SIZE)}
+            activeOpacity={0.7}
+          >
             <RefreshCw size={24} color={colors.primary} />
           </TouchableOpacity>
+          <Text style={styles.errorRetryText}>Toque para tentar novamente</Text>
         </View>
       </SafeAreaView>
     );
@@ -132,55 +76,43 @@ export const DailyQuoteScreen = () => {
   return (
     <SafeAreaView style={styles.container} edges={["bottom"]}>
       <Header username={username || undefined} />
-      <ScrollView
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={handleRefresh}
-            tintColor={colors.primary}
-            colors={[colors.primary]}
-          />
-        }
-      >
-        <Animated.View style={[styles.quoteContainer, { opacity: fadeAnim }]}>
-          <Quote size={32} color={colors.primary} style={styles.quoteIconTop} />
 
-          <Text style={styles.quoteText}>{quote}</Text>
+      <View style={styles.contentContainer}>
+        <QuoteSwiper
+          swiperRef={swiperRef}
+          quotes={quotes}
+          onSwiped={handleSwiped}
+          onSwiping={handleSwiping}
+          canSwipe={canSwipe}
+        />
 
-          <Quote size={32} color={colors.primary} style={styles.quoteIconBottom} />
-        </Animated.View>
-
-        <View style={styles.actionsContainer}>
-          <View style={{ alignItems: "center" }}>
-            <TouchableOpacity style={styles.actionButton} onPress={handleCopy} activeOpacity={0.7}>
-              <Copy size={24} color={colors.primary} />
-            </TouchableOpacity>
-            <Text style={styles.actionButtonLabel}>Copiar</Text>
-          </View>
-
-          <View style={{ alignItems: "center" }}>
-            <TouchableOpacity style={styles.actionButton} onPress={handleShare} activeOpacity={0.7}>
-              <Share2 size={24} color={colors.primary} />
-            </TouchableOpacity>
-            <Text style={styles.actionButtonLabel}>Compartilhar</Text>
-          </View>
-
-          <View style={{ alignItems: "center" }}>
-            <TouchableOpacity
-              style={styles.actionButton}
+        <View style={styles.bottomSection}>
+          <View style={styles.actionsContainer}>
+            <ActionButton
+              icon={Copy}
+              label="Copiar"
+              onPress={handleCopy}
+              disabled={areButtonsDisabled}
+              loading={isActionLoading.copy}
+            />
+            <ActionButton
+              icon={Share2}
+              label="Compartilhar"
+              onPress={handleShare}
+              disabled={areButtonsDisabled}
+              loading={isActionLoading.share}
+            />
+            <ActionButton
+              icon={RefreshCw}
+              label="Próxima"
               onPress={handleRefresh}
-              activeOpacity={0.7}
-            >
-              <RefreshCw size={24} color={colors.primary} />
-            </TouchableOpacity>
-            <Text style={styles.actionButtonLabel}>Atualizar</Text>
+              disabled={areButtonsDisabled}
+            />
           </View>
-        </View>
 
-        <Text style={styles.dateText}>{formatDate()}</Text>
-      </ScrollView>
+          <Text style={styles.dateText}>{formatDate()}</Text>
+        </View>
+      </View>
     </SafeAreaView>
   );
 };

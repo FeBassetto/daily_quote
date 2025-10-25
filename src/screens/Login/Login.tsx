@@ -14,7 +14,6 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Button } from "../../components/Button/Button";
 import { Input } from "../../components/Input/Input";
-import { LoginFooter } from "../../components/LoginFooter/LoginFooter";
 import { Logo } from "../../components/Logo/Logo";
 import {
   AUTH_MESSAGES,
@@ -27,6 +26,7 @@ import { useAuth } from "../../hooks/useAuth";
 import { authAPI } from "../../services/auth";
 import { showErrorToast, showSuccessToast } from "../../utils/errorHandler";
 import { type LoginFormData, loginSchema } from "../../utils/loginValidation";
+import { LoginFooter } from "./components/LoginFooter/LoginFooter";
 import { styles } from "./styles.login";
 
 export const LoginScreen = () => {
@@ -39,7 +39,7 @@ export const LoginScreen = () => {
     formState: { isSubmitting },
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
-    mode: "onBlur",
+    mode: "onSubmit",
     defaultValues: {
       username: "",
       password: "",
@@ -52,7 +52,10 @@ export const LoginScreen = () => {
 
       if (response.token) {
         await signIn(response.token, data.username);
-        showSuccessToast(SUCCESS_MESSAGES.LOGIN_SUCCESS, SUCCESS_MESSAGES.WELCOME);
+        showSuccessToast(
+          SUCCESS_MESSAGES.LOGIN_SUCCESS,
+          SUCCESS_MESSAGES.WELCOME
+        );
       } else {
         showErrorToast(ERROR_MESSAGES.INVALID_CREDENTIALS, "Erro no Login");
       }
@@ -80,14 +83,19 @@ export const LoginScreen = () => {
           <View style={styles.header}>
             <Logo size="large" style={styles.logo} />
             <Text style={styles.title}>{AUTH_MESSAGES.WELCOME_BACK}</Text>
-            <Text style={styles.subtitle}>{AUTH_MESSAGES.WELCOME_SUBTITLE}</Text>
+            <Text style={styles.subtitle}>
+              {AUTH_MESSAGES.WELCOME_SUBTITLE}
+            </Text>
           </View>
 
           <View style={styles.form}>
             <Controller
               control={control}
               name="username"
-              render={({ field: { onChange, onBlur, value }, fieldState: { error } }) => (
+              render={({
+                field: { onChange, onBlur, value },
+                fieldState: { error },
+              }) => (
                 <Input
                   value={value}
                   onChangeText={onChange}
@@ -106,7 +114,10 @@ export const LoginScreen = () => {
             <Controller
               control={control}
               name="password"
-              render={({ field: { onChange, onBlur, value }, fieldState: { error } }) => (
+              render={({
+                field: { onChange, onBlur, value },
+                fieldState: { error },
+              }) => (
                 <Input
                   value={value}
                   onChangeText={onChange}
@@ -142,7 +153,9 @@ export const LoginScreen = () => {
               activeOpacity={0.7}
               onPress={handleForgotPassword}
             >
-              <Text style={styles.forgotPasswordText}>{AUTH_MESSAGES.FORGOT_PASSWORD}</Text>
+              <Text style={styles.forgotPasswordText}>
+                {AUTH_MESSAGES.FORGOT_PASSWORD}
+              </Text>
             </TouchableOpacity>
 
             <Button

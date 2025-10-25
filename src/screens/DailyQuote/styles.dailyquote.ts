@@ -13,35 +13,15 @@ export const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.background,
   },
-  scrollContent: {
-    flexGrow: 1,
+  contentContainer: {
+    flex: 1,
     justifyContent: "center",
-    padding: spacing.lg,
+    paddingVertical: spacing.xl,
   },
-  quoteContainer: {
-    backgroundColor: colors.surface,
-    borderRadius: borderRadius.xl,
-    padding: spacing.xl,
-    ...shadows.lg,
-  },
-  quoteIconTop: {
-    alignSelf: "flex-start",
-    marginBottom: spacing.md,
-    opacity: 0.3,
-  },
-  quoteText: {
-    fontSize: fontSize.xl,
-    lineHeight: fontSize.xl * 1.5,
-    color: colors.text.primary,
-    fontWeight: fontWeight.medium,
-    textAlign: "center",
-    marginVertical: spacing.md,
-  },
-  quoteIconBottom: {
-    alignSelf: "flex-end",
-    marginTop: spacing.md,
-    opacity: 0.3,
-    transform: [{ rotate: "180deg" }],
+  bottomSection: {
+    backgroundColor: colors.background,
+    zIndex: 10,
+    elevation: 10,
   },
   loadingContainer: {
     flex: 1,
@@ -67,12 +47,6 @@ export const styles = StyleSheet.create({
     marginBottom: spacing.lg,
     fontWeight: fontWeight.semibold,
   },
-  actionsContainer: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    marginTop: spacing.xl,
-    paddingHorizontal: spacing.md,
-  },
   actionButton: {
     alignItems: "center",
     justifyContent: "center",
@@ -82,18 +56,25 @@ export const styles = StyleSheet.create({
     height: 56,
     ...shadows.md,
   },
-  actionButtonLabel: {
-    fontSize: fontSize.xs,
+  errorRetryText: {
+    fontSize: fontSize.sm,
     color: colors.text.secondary,
-    marginTop: spacing.xs,
-    fontWeight: fontWeight.medium,
+    textAlign: "center",
+    marginTop: spacing.md,
+    fontWeight: fontWeight.regular,
+  },
+  actionsContainer: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    paddingHorizontal: spacing.xl,
+    paddingVertical: spacing.md,
+    backgroundColor: colors.background,
   },
   dateText: {
     fontSize: fontSize.sm,
     color: colors.text.tertiary,
     textAlign: "center",
-    marginTop: spacing.lg,
-    marginBottom: spacing.xl,
+    marginTop: spacing.md,
     fontWeight: fontWeight.regular,
   },
 });

@@ -3,10 +3,10 @@ import { useState } from "react";
 import { Modal, Text, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
 import ReactNativeHapticFeedback from "react-native-haptic-feedback";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { ERROR_MESSAGES } from "../../constants/messages";
-import { colors } from "../../constants/theme";
-import { useAuth } from "../../hooks/useAuth";
-import { showErrorToast } from "../../utils/errorHandler";
+import { ERROR_MESSAGES } from "../../../../constants/messages";
+import { colors } from "../../../../constants/theme";
+import { useAuth } from "../../../../hooks/useAuth";
+import { showErrorToast } from "../../../../utils/errorHandler";
 import { styles } from "./styles.header";
 
 interface HeaderProps {
@@ -34,7 +34,7 @@ export const Header = ({ username = "Usuário" }: HeaderProps) => {
       setMenuVisible(false);
       await signOut();
     } catch {
-      showErrorToast(ERROR_MESSAGES.LOGOUT_ERROR);
+      showErrorToast(ERROR_MESSAGES.GENERIC_ERROR);
     }
   };
 

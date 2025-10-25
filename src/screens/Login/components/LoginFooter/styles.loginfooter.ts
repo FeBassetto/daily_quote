@@ -1,5 +1,5 @@
 import { StyleSheet } from "react-native";
-import { colors, fontSize, fontWeight, spacing } from "../../constants/theme";
+import { colors, fontSize, fontWeight, spacing } from "../../../../constants/theme";
 
 export const styles = StyleSheet.create({
   footer: {
