@@ -88,6 +88,16 @@ npm run android
 
 Certifique-se de que um emulador Android está rodando ou um dispositivo físico está conectado.
 
+### Gerar APK de Produção (Android)
+
+Para gerar um APK de produção:
+
+```bash
+npm run android:apk
+```
+
+O APK será gerado em `android/app/build/outputs/apk/release/app-release.apk`.
+
 ## Deep Linking
 
 O aplicativo suporta deep linking para acesso direto à frase do dia.
@@ -209,6 +219,7 @@ npm install
 - `npm start` - Inicia o Metro bundler
 - `npm run ios` - Executa no iOS
 - `npm run android` - Executa no Android
+- `npm run android:apk` - Gera APK de produção para Android
 - `npm run lint` - Executa o linter
 - `npm run lint:fix` - Corrige problemas de lint
 - `npm run lint:format` - Formata o código
