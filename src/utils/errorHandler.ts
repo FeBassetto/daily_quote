@@ -12,10 +12,7 @@ export const showErrorToast = (message: string, customTitle?: string) => {
   });
 };
 
-export const showSuccessToast = (
-  message: string,
-  title: string = "Sucesso"
-) => {
+export const showSuccessToast = (message: string, title: string = "Sucesso") => {
   Toast.show({
     type: "success",
     text1: title,
@@ -27,10 +24,7 @@ export const showSuccessToast = (
   });
 };
 
-export const showInfoToast = (
-  message: string,
-  title: string = "Informação"
-) => {
+export const showInfoToast = (message: string, title: string = "Informação") => {
   Toast.show({
     type: "info",
     text1: title,
