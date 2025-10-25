@@ -1,12 +1,5 @@
+import { borderRadius, colors, fontSize, fontWeight, shadows, spacing } from "@constants/theme";
 import { StyleSheet } from "react-native";
-import {
-  borderRadius,
-  colors,
-  fontSize,
-  fontWeight,
-  shadows,
-  spacing,
-} from "../../../../constants/theme";
 
 export const styles = StyleSheet.create({
   errorContainer: {
@@ -19,7 +12,7 @@ export const styles = StyleSheet.create({
     width: 120,
     height: 120,
     borderRadius: 60,
-    backgroundColor: colors.status.error + "15",
+    backgroundColor: `${colors.status.error}15`,
     justifyContent: "center",
     alignItems: "center",
     marginBottom: spacing.xl,

@@ -1,12 +1,5 @@
+import { borderRadius, colors, fontSize, fontWeight, shadows, spacing } from "@constants/theme";
 import { StyleSheet } from "react-native";
-import {
-  borderRadius,
-  colors,
-  fontSize,
-  fontWeight,
-  shadows,
-  spacing,
-} from "../../../../constants/theme";
 
 export const styles = StyleSheet.create({
   header: {

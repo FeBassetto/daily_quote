@@ -1,5 +1,5 @@
+import { AUTH_MESSAGES } from "@constants/messages";
 import { Text, TouchableOpacity, View } from "react-native";
-import { AUTH_MESSAGES } from "../../../../constants/messages";
 import { styles } from "./styles.loginfooter";
 
 interface LoginFooterProps {

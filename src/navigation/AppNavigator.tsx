@@ -1,8 +1,8 @@
+import { useAuth } from "@hooks/useAuth";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { useAuth } from "../hooks/useAuth";
-import { DailyQuoteScreen } from "../screens/DailyQuote/DailyQuote";
-import { LoginScreen } from "../screens/Login/Login";
+import { DailyQuoteScreen } from "@screens/DailyQuote/DailyQuote";
+import { LoginScreen } from "@screens/Login/Login";
 
 type AuthStackParamList = {
   Login: undefined;

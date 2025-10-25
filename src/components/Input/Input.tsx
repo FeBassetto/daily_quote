@@ -1,3 +1,4 @@
+import { colors } from "@constants/theme";
 import { type ReactNode, useState } from "react";
 import {
   Text,
@@ -7,7 +8,6 @@ import {
   View,
   type ViewStyle,
 } from "react-native";
-import { colors } from "../../constants/theme";
 import { styles } from "./styles.input";
 
 interface InputProps extends TextInputProps {

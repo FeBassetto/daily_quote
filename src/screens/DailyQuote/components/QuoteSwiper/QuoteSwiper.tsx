@@ -1,8 +1,8 @@
+import type { QuoteCard as QuoteCardType } from "@models/quote";
+import type { SwiperRef } from "@models/swiper";
+import { QuoteCard } from "@screens/DailyQuote/components/QuoteCard/QuoteCard";
 import { View } from "react-native";
 import Swiper from "react-native-deck-swiper";
-import type { QuoteCard as QuoteCardType } from "../../../../types/quote";
-import type { SwiperRef } from "../../../../types/swiper";
-import { QuoteCard } from "../QuoteCard/QuoteCard";
 import { styles } from "./styles.quoteswiper";
 
 interface QuoteSwiperProps {

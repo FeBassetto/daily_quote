@@ -1,10 +1,10 @@
+import { ERROR_MESSAGES } from "@constants/messages";
+import { useAuth } from "@hooks/useAuth";
+import type { QuoteCard } from "@models/quote";
+import { quoteAPI } from "@services/quote";
+import { showErrorToast } from "@utils/errorHandler";
+import { generateQuoteId } from "@utils/quote";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { ERROR_MESSAGES } from "../../../constants/messages";
-import { useAuth } from "../../../hooks/useAuth";
-import { quoteAPI } from "../../../services/quote";
-import type { QuoteCard } from "../../../types/quote";
-import { showErrorToast } from "../../../utils/errorHandler";
-import { generateQuoteId } from "../../../utils/quote";
 
 const MAX_RETRY_ATTEMPTS = 2;
 const BUFFER_SIZE = 5;
@@ -24,21 +24,19 @@ interface UseQuoteManagerReturn {
 const updateQuoteInState = (
   setQuotes: React.Dispatch<React.SetStateAction<QuoteCard[]>>,
   quoteId: string,
-  quoteText: string
+  quoteText: string,
 ) => {
   setQuotes((prev) => {
     const exists = prev.some((q) => q.id === quoteId);
     if (!exists) return prev;
 
-    return prev.map((q) =>
-      q.id === quoteId ? { ...q, text: quoteText, loading: false } : q
-    );
+    return prev.map((q) => (q.id === quoteId ? { ...q, text: quoteText, loading: false } : q));
   });
 };
 
 const removeQuoteFromState = (
   setQuotes: React.Dispatch<React.SetStateAction<QuoteCard[]>>,
-  quoteId: string
+  quoteId: string,
 ) => {
   setQuotes((prev) => prev.filter((q) => q.id !== quoteId));
 };
@@ -68,9 +66,7 @@ export const useQuoteManager = (): UseQuoteManagerReturn => {
       if (quoteText) return quoteText;
 
       if (attempt < MAX_RETRY_ATTEMPTS) {
-        await new Promise<void>((resolve) =>
-          setTimeout(resolve, 1000 * attempt)
-        );
+        await new Promise<void>((resolve) => setTimeout(resolve, 1000 * attempt));
       }
     }
     return null;
@@ -107,7 +103,7 @@ export const useQuoteManager = (): UseQuoteManagerReturn => {
         loadQuote(quote.id);
       });
     },
-    [token]
+    [token],
   );
 
   const shouldPreloadMore = useCallback(
@@ -115,7 +111,7 @@ export const useQuoteManager = (): UseQuoteManagerReturn => {
       const remainingCards = quotes.length - (index + 1);
       return remainingCards <= PRELOAD_THRESHOLD && !isLoadingMore;
     },
-    [quotes.length, isLoadingMore]
+    [quotes.length, isLoadingMore],
   );
 
   const simulateError = useCallback(() => {

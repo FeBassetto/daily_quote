@@ -1,6 +1,6 @@
+import { colors } from "@constants/theme";
 import { AlertCircle, RefreshCw } from "lucide-react-native";
 import { Text, TouchableOpacity, View } from "react-native";
-import { colors } from "../../../../constants/theme";
 import { styles } from "./styles.errorstate";
 
 interface ErrorStateProps {
@@ -17,11 +17,7 @@ export const ErrorState = ({ onRetry }: ErrorStateProps) => {
       <Text style={styles.errorText}>
         Não conseguimos carregar as frases no momento. Verifique sua conexão e tente novamente.
       </Text>
-      <TouchableOpacity
-        style={styles.actionButton}
-        onPress={onRetry}
-        activeOpacity={0.8}
-      >
+      <TouchableOpacity style={styles.actionButton} onPress={onRetry} activeOpacity={0.8}>
         <RefreshCw size={20} color={colors.text.inverse} />
         <Text style={styles.actionButtonText}>Tentar Novamente</Text>
       </TouchableOpacity>

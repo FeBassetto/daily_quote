@@ -1,6 +1,6 @@
+import { showErrorToast } from "@utils/errorHandler";
 import axios from "axios";
 import * as Keychain from "react-native-keychain";
-import { showErrorToast } from "../utils/errorHandler";
 
 const TOKEN_SERVICE = "auth_token";
 
@@ -17,12 +17,12 @@ api.interceptors.response.use(
     if (error.response?.status === 403) {
       showErrorToast(
         "Sua sessão foi encerrada. Por favor, faça login novamente.",
-        "Sessão expirada"
+        "Sessão expirada",
       );
 
       await Keychain.resetGenericPassword({ service: TOKEN_SERVICE });
     }
 
     return Promise.reject(error);
-  }
+  },
 );

@@ -1,11 +1,4 @@
-import {
-  createContext,
-  type ReactNode,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import { createContext, type ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 import RNBootSplash from "react-native-bootsplash";
 import * as Keychain from "react-native-keychain";
 
@@ -119,7 +112,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       signIn,
       signOut,
     }),
-    [token, username, isLoading, signIn, signOut]
+    [token, username, isLoading, signIn, signOut],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

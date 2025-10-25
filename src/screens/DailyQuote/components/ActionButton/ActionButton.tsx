@@ -1,6 +1,6 @@
+import { colors } from "@constants/theme";
 import type { LucideIcon } from "lucide-react-native";
 import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
-import { colors } from "../../../../constants/theme";
 import { styles } from "./styles.actionbutton";
 
 interface ActionButtonProps {

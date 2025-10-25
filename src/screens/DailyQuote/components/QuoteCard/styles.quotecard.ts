@@ -1,12 +1,5 @@
+import { borderRadius, colors, fontSize, fontWeight, shadows, spacing } from "@constants/theme";
 import { Dimensions, StyleSheet } from "react-native";
-import {
-  borderRadius,
-  colors,
-  fontSize,
-  fontWeight,
-  shadows,
-  spacing,
-} from "../../../../constants/theme";
 
 const { height } = Dimensions.get("window");
 

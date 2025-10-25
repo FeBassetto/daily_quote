@@ -1,5 +1,5 @@
-import type { QuoteResponse } from "../types/quote";
-import { api } from "./axios";
+import type { QuoteResponse } from "@models/quote";
+import { api } from "@services/axios";
 
 export const quoteAPI = {
   getDailyQuote: async (token: string): Promise<string> => {

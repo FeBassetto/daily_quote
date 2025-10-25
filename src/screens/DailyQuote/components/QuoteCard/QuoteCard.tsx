@@ -1,8 +1,8 @@
+import { colors } from "@constants/theme";
+import type { QuoteCard as QuoteCardType } from "@models/quote";
 import { Quote } from "lucide-react-native";
 import { memo } from "react";
 import { ActivityIndicator, Text, View } from "react-native";
-import { colors } from "../../../../constants/theme";
-import type { QuoteCard as QuoteCardType } from "../../../../types/quote";
 import { styles } from "./styles.quotecard";
 
 interface QuoteCardProps {

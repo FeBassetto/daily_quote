@@ -1,19 +1,13 @@
+import { ERROR_MESSAGES } from "@constants/messages";
+import { colors } from "@constants/theme";
+import { useAuth } from "@hooks/useAuth";
+import { api } from "@services/axios";
+import { showErrorToast } from "@utils/errorHandler";
 import { Menu, X } from "lucide-react-native";
 import { useState } from "react";
-import {
-  Modal,
-  Text,
-  TouchableOpacity,
-  TouchableWithoutFeedback,
-  View,
-} from "react-native";
+import { Modal, Text, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
 import ReactNativeHapticFeedback from "react-native-haptic-feedback";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { ERROR_MESSAGES } from "../../../../constants/messages";
-import { colors } from "../../../../constants/theme";
-import { useAuth } from "../../../../hooks/useAuth";
-import { api } from "../../../../services/axios";
-import { showErrorToast } from "../../../../utils/errorHandler";
 import { styles } from "./styles.header";
 
 interface HeaderProps {
@@ -21,10 +15,7 @@ interface HeaderProps {
   simulateError: () => void;
 }
 
-export const Header = ({
-  username = "Usuário",
-  simulateError,
-}: HeaderProps) => {
+export const Header = ({ username = "Usuário", simulateError }: HeaderProps) => {
   const [menuVisible, setMenuVisible] = useState(false);
   const { signOut } = useAuth();
   const insets = useSafeAreaInsets();
@@ -71,11 +62,7 @@ export const Header = ({
     <>
       <View style={[styles.header, { paddingTop: insets.top + 16 }]}>
         <Text style={styles.title}>Frase do Dia</Text>
-        <TouchableOpacity
-          onPress={handleOpenMenu}
-          style={styles.menuButton}
-          activeOpacity={0.7}
-        >
+        <TouchableOpacity onPress={handleOpenMenu} style={styles.menuButton} activeOpacity={0.7}>
           <Menu size={28} color={colors.text.primary} />
         </TouchableOpacity>
       </View>
@@ -111,9 +98,7 @@ export const Header = ({
 
                 <View style={styles.userInfo}>
                   <View style={styles.userAvatar}>
-                    <Text style={styles.userAvatarText}>
-                      {username.charAt(0).toUpperCase()}
-                    </Text>
+                    <Text style={styles.userAvatarText}>{username.charAt(0).toUpperCase()}</Text>
                   </View>
                   <Text style={styles.username}>{username}</Text>
                 </View>
@@ -133,9 +118,7 @@ export const Header = ({
                   style={styles.testMenuItem}
                   activeOpacity={0.7}
                 >
-                  <Text style={styles.testMenuItemText}>
-                    Simular Erro de API
-                  </Text>
+                  <Text style={styles.testMenuItemText}>Simular Erro de API</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity

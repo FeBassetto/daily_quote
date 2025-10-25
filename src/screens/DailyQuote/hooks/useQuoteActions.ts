@@ -1,11 +1,11 @@
+import { ERROR_MESSAGES, SUCCESS_MESSAGES } from "@constants/messages";
+import type { QuoteCard } from "@models/quote";
+import type { SwiperRef } from "@models/swiper";
 import Clipboard from "@react-native-clipboard/clipboard";
+import { showErrorToast, showSuccessToast } from "@utils/errorHandler";
 import { useState } from "react";
 import ReactNativeHapticFeedback from "react-native-haptic-feedback";
 import Share from "react-native-share";
-import { ERROR_MESSAGES, SUCCESS_MESSAGES } from "../../../constants/messages";
-import type { QuoteCard } from "../../../types/quote";
-import type { SwiperRef } from "../../../types/swiper";
-import { showErrorToast, showSuccessToast } from "../../../utils/errorHandler";
 
 const ACTION_COOLDOWN = 1000;
 
@@ -49,8 +49,7 @@ export const useQuoteActions = ({
 
   const handleCopy = async () => {
     const currentQuote = getCurrentQuote();
-    if (!isQuoteReady(currentQuote) || !currentQuote || isActionLoading.copy)
-      return;
+    if (!isQuoteReady(currentQuote) || !currentQuote || isActionLoading.copy) return;
 
     setIsActionLoading((prev) => ({ ...prev, copy: true }));
 
@@ -69,8 +68,7 @@ export const useQuoteActions = ({
 
   const handleShare = async () => {
     const currentQuote = getCurrentQuote();
-    if (!isQuoteReady(currentQuote) || !currentQuote || isActionLoading.share)
-      return;
+    if (!isQuoteReady(currentQuote) || !currentQuote || isActionLoading.share) return;
 
     setIsActionLoading((prev) => ({ ...prev, share: true }));
 
