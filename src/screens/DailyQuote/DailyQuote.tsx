@@ -1,12 +1,13 @@
 import { Copy, RefreshCw, Share2 } from "lucide-react-native";
 import { useRef } from "react";
-import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { colors } from "../../constants/theme";
 import { useAuth } from "../../hooks/useAuth";
 import type { SwiperRef } from "../../types/swiper";
 import { formatDate } from "../../utils/quote";
 import { ActionButton } from "./components/ActionButton/ActionButton";
+import { ErrorState } from "./components/ErrorState/ErrorState";
 import { Header } from "./components/Header/Header";
 import { QuoteSwiper } from "./components/QuoteSwiper/QuoteSwiper";
 import { useQuoteActions } from "./hooks/useQuoteActions";
@@ -20,8 +21,15 @@ export const DailyQuoteScreen = () => {
   const { username } = useAuth();
   const swiperRef = useRef<SwiperRef | null>(null);
 
-  const { quotes, currentIndex, initialLoading, setCurrentIndex, addNewQuotes, shouldPreloadMore } =
-    useQuoteManager();
+  const {
+    quotes,
+    currentIndex,
+    initialLoading,
+    setCurrentIndex,
+    addNewQuotes,
+    shouldPreloadMore,
+    simulateError,
+  } = useQuoteManager();
 
   const { isSwiping, handleSwiped, handleSwiping } = useSwipeManager({
     onIndexChange: setCurrentIndex,
@@ -29,13 +37,14 @@ export const DailyQuoteScreen = () => {
     onPreload: () => addNewQuotes(BUFFER_SIZE),
   });
 
-  const { handleCopy, handleShare, handleRefresh, isActionLoading } = useQuoteActions({
-    quotes,
-    currentIndex,
-    isSwiping,
-    swiperRef,
-    onSwipingChange: handleSwiping,
-  });
+  const { handleCopy, handleShare, handleRefresh, isActionLoading } =
+    useQuoteActions({
+      quotes,
+      currentIndex,
+      isSwiping,
+      swiperRef,
+      onSwipingChange: handleSwiping,
+    });
 
   const currentQuote = quotes[currentIndex];
   const isCurrentCardLoading = currentQuote?.loading || !currentQuote?.text;
@@ -45,7 +54,10 @@ export const DailyQuoteScreen = () => {
   if (initialLoading) {
     return (
       <SafeAreaView style={styles.container} edges={["bottom"]}>
-        <Header username={username || undefined} />
+        <Header
+          username={username || undefined}
+          simulateError={simulateError}
+        />
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={colors.primary} />
           <Text style={styles.loadingText}>Carregando suas frases...</Text>
@@ -57,25 +69,18 @@ export const DailyQuoteScreen = () => {
   if (quotes.length === 0) {
     return (
       <SafeAreaView style={styles.container} edges={["bottom"]}>
-        <Header username={username || undefined} />
-        <View style={styles.errorContainer}>
-          <Text style={styles.errorText}>Não foi possível carregar as frases</Text>
-          <TouchableOpacity
-            style={styles.actionButton}
-            onPress={() => addNewQuotes(BUFFER_SIZE)}
-            activeOpacity={0.7}
-          >
-            <RefreshCw size={24} color={colors.primary} />
-          </TouchableOpacity>
-          <Text style={styles.errorRetryText}>Toque para tentar novamente</Text>
-        </View>
+        <Header
+          username={username || undefined}
+          simulateError={simulateError}
+        />
+        <ErrorState onRetry={() => addNewQuotes(BUFFER_SIZE)} />
       </SafeAreaView>
     );
   }
 
   return (
     <SafeAreaView style={styles.container} edges={["bottom"]}>
-      <Header username={username || undefined} />
+      <Header username={username || undefined} simulateError={simulateError} />
 
       <View style={styles.contentContainer}>
         <QuoteSwiper

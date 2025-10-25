@@ -80,6 +80,23 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
   }, [isLoading]);
 
+  useEffect(() => {
+    const checkAuthState = async () => {
+      if (isLoading) return;
+
+      const credentials = await Keychain.getGenericPassword({
+        service: TOKEN_SERVICE,
+      });
+
+      if (!credentials && token) {
+        clearAuthState();
+      }
+    };
+
+    const interval = setInterval(checkAuthState, 1000);
+    return () => clearInterval(interval);
+  }, [isLoading, token]);
+
   const signIn = useCallback(async (newToken: string, newUsername: string) => {
     await Keychain.setGenericPassword(newUsername, newToken, {
       service: TOKEN_SERVICE,

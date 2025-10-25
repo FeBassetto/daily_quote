@@ -1,4 +1,3 @@
-import { AxiosError } from "axios";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ERROR_MESSAGES } from "../../../constants/messages";
 import { useAuth } from "../../../hooks/useAuth";
@@ -19,6 +18,7 @@ interface UseQuoteManagerReturn {
   setCurrentIndex: (index: number) => void;
   addNewQuotes: (count?: number) => void;
   shouldPreloadMore: (index: number) => boolean;
+  simulateError: () => void;
 }
 
 const updateQuoteInState = (
@@ -48,24 +48,14 @@ export const useQuoteManager = (): UseQuoteManagerReturn => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [initialLoading, setInitialLoading] = useState(true);
   const [isLoadingMore] = useState(false);
-  const { token, signOut } = useAuth();
+  const { token } = useAuth();
   const loadingQuotesRef = useRef(new Set<string>());
-
-  const handleAuthError = async () => {
-    showErrorToast(ERROR_MESSAGES.QUOTE_AUTH_ERROR);
-    setTimeout(async () => {
-      await signOut();
-    }, 2000);
-  };
 
   const fetchSingleQuote = async (): Promise<string | null> => {
     try {
       const quoteText = await quoteAPI.getDailyQuote(token || "");
       return quoteText;
-    } catch (error) {
-      if (error instanceof AxiosError && error.response?.status === 403) {
-        await handleAuthError();
-      }
+    } catch {
       showErrorToast(ERROR_MESSAGES.QUOTE_LOAD_ERROR);
       return null;
     }
@@ -117,7 +107,7 @@ export const useQuoteManager = (): UseQuoteManagerReturn => {
         loadQuote(quote.id);
       });
     },
-    [token, signOut]
+    [token]
   );
 
   const shouldPreloadMore = useCallback(
@@ -127,6 +117,11 @@ export const useQuoteManager = (): UseQuoteManagerReturn => {
     },
     [quotes.length, isLoadingMore]
   );
+
+  const simulateError = useCallback(() => {
+    setQuotes([]);
+    setCurrentIndex(0);
+  }, []);
 
   useEffect(() => {
     if (token) {
@@ -145,5 +140,6 @@ export const useQuoteManager = (): UseQuoteManagerReturn => {
     setCurrentIndex,
     addNewQuotes,
     shouldPreloadMore,
+    simulateError,
   };
 };

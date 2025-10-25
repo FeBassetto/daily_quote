@@ -94,4 +94,17 @@ export const styles = StyleSheet.create({
     fontWeight: fontWeight.semibold,
     color: colors.text.inverse,
   },
+  testMenuItem: {
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.md,
+    borderRadius: borderRadius.md,
+    backgroundColor: colors.status.warning,
+    alignItems: "center",
+    marginBottom: spacing.sm,
+  },
+  testMenuItemText: {
+    fontSize: fontSize.sm,
+    fontWeight: fontWeight.medium,
+    color: colors.surface,
+  },
 });
