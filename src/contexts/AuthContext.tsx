@@ -31,6 +31,20 @@ interface AuthProviderProps {
   children: ReactNode;
 }
 
+type SignOutHandler = () => Promise<void>;
+
+let globalSignOutHandler: SignOutHandler | null = null;
+
+export const setGlobalSignOutHandler = (handler: SignOutHandler | null) => {
+  globalSignOutHandler = handler;
+};
+
+export const triggerGlobalSignOut = async () => {
+  if (globalSignOutHandler) {
+    await globalSignOutHandler();
+  }
+};
+
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [token, setTokenState] = useState<string | null | undefined>(undefined);
   const [username, setUsernameState] = useState<string | null>(null);
@@ -111,6 +125,13 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     await Keychain.resetGenericPassword({ service: TOKEN_SERVICE });
     clearAuthState();
   }, []);
+
+  useEffect(() => {
+    setGlobalSignOutHandler(signOut);
+    return () => {
+      setGlobalSignOutHandler(null);
+    };
+  }, [signOut]);
 
   const value: AuthContextData = useMemo(
     () => ({

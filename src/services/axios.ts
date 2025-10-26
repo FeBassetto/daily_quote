@@ -1,8 +1,6 @@
+import { triggerGlobalSignOut } from "@contexts/AuthContext";
 import { showErrorToast } from "@utils/errorHandler";
 import axios from "axios";
-import * as Keychain from "react-native-keychain";
-
-const TOKEN_SERVICE = "auth_token";
 
 export const api = axios.create({
   baseURL: "https://n8n.jrmendonca.com.br/webhook",
@@ -20,7 +18,7 @@ api.interceptors.response.use(
         "Sessão expirada",
       );
 
-      await Keychain.resetGenericPassword({ service: TOKEN_SERVICE });
+      await triggerGlobalSignOut();
     }
 
     return Promise.reject(error);
