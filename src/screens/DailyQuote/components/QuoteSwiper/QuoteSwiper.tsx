@@ -2,7 +2,8 @@ import type { QuoteCard as QuoteCardType } from "@models/quote";
 import type { SwiperRef } from "@models/swiper";
 import { QuoteCard } from "@screens/DailyQuote/components/QuoteCard/QuoteCard";
 import { View } from "react-native";
-import Swiper from "react-native-deck-swiper";
+import type Swiper from "react-native-deck-swiper";
+import SwiperComponent from "react-native-deck-swiper";
 import { styles } from "./styles.quoteswiper";
 
 interface QuoteSwiperProps {
@@ -24,11 +25,11 @@ export const QuoteSwiper = ({
 }: QuoteSwiperProps) => {
   return (
     <View style={styles.container}>
-      <Swiper
+      <SwiperComponent
         ref={swiperRef as React.Ref<Swiper<QuoteCardType>>}
         cards={quotes}
-        renderCard={(card) => <QuoteCard card={card} />}
-        keyExtractor={(card) => card.id}
+        renderCard={(card: QuoteCardType) => <QuoteCard card={card} />}
+        keyExtractor={(card: QuoteCardType) => card.id}
         onSwiped={onSwiped}
         onSwiping={onSwiping}
         onSwipedAborted={onSwipedAborted}

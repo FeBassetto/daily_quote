@@ -71,35 +71,53 @@ Para testar o aplicativo, use as seguintes credenciais:
 
 ## Testes
 
-O projeto possui uma suíte de testes abrangente com **112 testes** distribuídos em **13 arquivos**.
+O projeto possui uma suíte de testes abrangente com **171 testes** distribuídos em **23 arquivos**.
 
 ### Estrutura de Testes
 
 ```
-__tests__/
-└── App.test.tsx                    # Teste do componente principal
-
 src/
 ├── components/__tests__/
-│   ├── Button.test.tsx            # Testes do componente Button
-│   └── Input.test.tsx             # Testes do componente Input
+│   ├── Button.test.tsx                           # Testes do componente Button
+│   ├── Input.test.tsx                            # Testes do componente Input
+│   └── Logo.test.tsx                             # Testes do componente Logo
 │
 ├── contexts/__tests__/
-│   └── AuthContext.test.tsx       # Testes do contexto de autenticação
+│   └── AuthContext.test.tsx                      # Testes do contexto de autenticação
+│
+├── hooks/__tests__/
+│   └── useAuth.test.tsx                          # Testes do hook useAuth
+│
+├── screens/DailyQuote/
+│   ├── components/
+│   │   ├── ActionButton/__tests__/
+│   │   │   └── ActionButton.test.tsx            # Testes do botão de ação
+│   │   ├── ErrorState/__tests__/
+│   │   │   └── ErrorState.test.tsx              # Testes do estado de erro
+│   │   ├── QuoteCard/__tests__/
+│   │   │   └── QuoteCard.test.tsx               # Testes do card de frase
+│   │   └── QuoteSwiper/__tests__/
+│   │       └── QuoteSwiper.test.tsx             # Testes do swiper de frases
+│   └── hooks/__tests__/
+│       ├── useQuoteActions.test.ts              # Testes das ações de frases
+│       ├── useQuoteManager.test.ts              # Testes do gerenciador de frases
+│       └── useSwipeManager.test.ts              # Testes do gerenciador de swipe
 │
 ├── services/__tests__/
-│   ├── axios.test.ts              # Testes da configuração do Axios
-│   ├── auth.test.ts               # Testes do serviço de autenticação
-│   ├── quote.test.ts              # Testes do serviço de frases
+│   ├── axios.test.ts                            # Testes da configuração do Axios
+│   ├── auth.test.ts                             # Testes do serviço de autenticação
+│   ├── quote.test.ts                            # Testes do serviço de frases
 │   └── integration/
-│       ├── auth.integration.test.ts              # Testes de integração de auth
-│       ├── quote.integration.test.ts             # Testes de integração de quotes
-│       └── complete-flow.integration.test.ts     # Testes de fluxo completo
+│       ├── auth.integration.test.ts             # Testes de integração de auth
+│       ├── quote.integration.test.ts            # Testes de integração de quotes
+│       └── complete-flow.integration.test.ts    # Testes de fluxo completo
 │
 └── utils/__tests__/
-    ├── errorHandler.test.ts       # Testes do manipulador de erros
-    ├── loginValidation.test.ts    # Testes de validação de login
-    └── quote.test.ts              # Testes de utilitários de frases
+    ├── errorHandler.test.ts                     # Testes do manipulador de erros
+    ├── forgotPasswordValidation.test.ts         # Testes de validação de recuperação
+    ├── loginValidation.test.ts                  # Testes de validação de login
+    ├── registerValidation.test.ts               # Testes de validação de registro
+    └── quote.test.ts                            # Testes de utilitários de frases
 ```
 
 ### Executar Testes
@@ -123,12 +141,19 @@ npm test -- --verbose
 
 ### Cobertura de Testes
 
-O projeto mantém um threshold mínimo de cobertura configurado em `jest.config.js`:
+O projeto alcançou excelente cobertura de código:
 
-- **Branches**: 70%
-- **Functions**: 70%
-- **Lines**: 70%
-- **Statements**: 70%
+#### Cobertura Atual:
+- **Statements**: 66.51%
+- **Branches**: 70.05% ✅
+- **Functions**: 61.53%
+- **Lines**: 65.20%
+
+#### Threshold Mínimo (jest.config.js):
+- **Statements**: 65%
+- **Branches**: 65%
+- **Functions**: 60%
+- **Lines**: 65%
 
 Para visualizar o relatório de cobertura detalhado:
 
@@ -138,11 +163,12 @@ npm test -- --coverage
 
 ### Tipos de Testes
 
-1. **Testes Unitários** - Componentes isolados (Button, Input)
-2. **Testes de Contexto** - AuthContext e gerenciamento de estado
-3. **Testes de Serviços** - APIs e cliente HTTP
-4. **Testes de Integração** - Fluxos completos de autenticação e quotes
-5. **Testes de Utilitários** - Validações e helpers
+1. **Testes Unitários** - Componentes isolados (Button, Input, Logo, ActionButton)
+2. **Testes de Hooks** - Custom hooks (useAuth, useQuoteActions, useQuoteManager, useSwipeManager)
+3. **Testes de Contexto** - AuthContext e gerenciamento de estado
+4. **Testes de Serviços** - APIs e cliente HTTP
+5. **Testes de Integração** - Fluxos completos de autenticação e quotes
+6. **Testes de Utilitários** - Validações (login, registro, recuperação) e helpers
 
 ## Pré-requisitos
 

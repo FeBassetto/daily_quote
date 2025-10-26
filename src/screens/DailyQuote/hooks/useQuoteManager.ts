@@ -6,7 +6,9 @@ import { showErrorToast } from "@utils/errorHandler";
 import { generateQuoteId } from "@utils/quote";
 import { useCallback, useEffect, useRef, useState } from "react";
 
-const MAX_RETRY_ATTEMPTS = 2;
+const MAX_RETRY_ATTEMPTS = 5;
+const BASE_RETRY_DELAY_MS = 1000;
+const MAX_BACKOFF_DELAY_MS = 10000;
 const BUFFER_SIZE = 5;
 const PRELOAD_THRESHOLD = 2;
 
@@ -59,6 +61,20 @@ export const useQuoteManager = (): UseQuoteManagerReturn => {
     }
   };
 
+  const calculateRetryDelay = (retryCount: number): number => {
+    if (retryCount <= 0) return 0;
+
+    const exponentialDelay = Math.min(
+      BASE_RETRY_DELAY_MS * 2 ** (retryCount - 1),
+      MAX_BACKOFF_DELAY_MS,
+    );
+    const jitter = Math.floor(Math.random() * BASE_RETRY_DELAY_MS);
+
+    return Math.min(exponentialDelay + jitter, MAX_BACKOFF_DELAY_MS);
+  };
+
+  const delay = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
+
   const fetchQuoteWithRetry = async (): Promise<string | null> => {
     for (let attempt = 1; attempt <= MAX_RETRY_ATTEMPTS; attempt++) {
       const quoteText = await fetchSingleQuote();
@@ -66,7 +82,10 @@ export const useQuoteManager = (): UseQuoteManagerReturn => {
       if (quoteText) return quoteText;
 
       if (attempt < MAX_RETRY_ATTEMPTS) {
-        await new Promise<void>((resolve) => setTimeout(resolve, 1000 * attempt));
+        const delayMs = calculateRetryDelay(attempt);
+        if (delayMs > 0) {
+          await delay(delayMs);
+        }
       }
     }
     return null;

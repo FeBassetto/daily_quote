@@ -1,6 +1,6 @@
 import { act, render, waitFor } from "@testing-library/react-native";
 import React from "react";
-import { Text } from "react-native";
+import { AppState, Text } from "react-native";
 import RNBootSplash from "react-native-bootsplash";
 import * as Keychain from "react-native-keychain";
 import { AuthContext, AuthProvider } from "../AuthContext";
@@ -18,14 +18,25 @@ const TestComponent = () => {
 };
 
 describe("AuthContext", () => {
+  let appStateListener: ((state: string) => void) | null = null;
+
   beforeEach(() => {
     jest.clearAllMocks();
     jest.useFakeTimers();
+
+    appStateListener = null;
+    jest.spyOn(AppState, "addEventListener").mockImplementation((_, listener) => {
+      appStateListener = listener as (state: string) => void;
+      return {
+        remove: jest.fn(),
+      };
+    });
   });
 
   afterEach(() => {
     jest.runOnlyPendingTimers();
     jest.useRealTimers();
+    jest.restoreAllMocks();
   });
 
   describe("Initial state", () => {
@@ -112,7 +123,8 @@ describe("AuthContext", () => {
 
       expect(Keychain.setGenericPassword).toHaveBeenCalledWith("newuser", "new-token", {
         service: "auth_token",
-        accessible: Keychain.ACCESSIBLE.WHEN_UNLOCKED,
+        accessible: Keychain.ACCESSIBLE.WHEN_PASSCODE_SET_THIS_DEVICE_ONLY,
+        securityLevel: Keychain.SECURITY_LEVEL.SECURE_HARDWARE,
       });
 
       await waitFor(() => {
@@ -193,7 +205,7 @@ describe("AuthContext", () => {
   });
 
   describe("Auth state monitoring", () => {
-    it("should clear state when credentials are removed externally", async () => {
+    it("should clear state when credentials are removed externally and app becomes active", async () => {
       const mockCredentials = {
         username: "testuser",
         password: "test-token",
@@ -215,7 +227,9 @@ describe("AuthContext", () => {
       (Keychain.getGenericPassword as jest.Mock).mockResolvedValue(false);
 
       await act(async () => {
-        jest.advanceTimersByTime(1000);
+        if (appStateListener) {
+          appStateListener("active");
+        }
         await Promise.resolve();
       });
 

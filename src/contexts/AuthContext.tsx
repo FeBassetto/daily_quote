@@ -1,4 +1,5 @@
 import { createContext, type ReactNode, useCallback, useEffect, useMemo, useState } from "react";
+import { AppState } from "react-native";
 import RNBootSplash from "react-native-bootsplash";
 import * as Keychain from "react-native-keychain";
 
@@ -29,6 +30,20 @@ export const AuthContext = createContext<AuthContextData>({
 interface AuthProviderProps {
   children: ReactNode;
 }
+
+type SignOutHandler = () => Promise<void>;
+
+let globalSignOutHandler: SignOutHandler | null = null;
+
+export const setGlobalSignOutHandler = (handler: SignOutHandler | null) => {
+  globalSignOutHandler = handler;
+};
+
+export const triggerGlobalSignOut = async () => {
+  if (globalSignOutHandler) {
+    await globalSignOutHandler();
+  }
+};
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [token, setTokenState] = useState<string | null | undefined>(undefined);
@@ -86,14 +101,22 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       }
     };
 
-    const interval = setInterval(checkAuthState, 1000);
-    return () => clearInterval(interval);
+    const subscription = AppState.addEventListener("change", (nextAppState) => {
+      if (nextAppState === "active") {
+        checkAuthState();
+      }
+    });
+
+    return () => {
+      subscription.remove();
+    };
   }, [isLoading, token]);
 
   const signIn = useCallback(async (newToken: string, newUsername: string) => {
     await Keychain.setGenericPassword(newUsername, newToken, {
       service: TOKEN_SERVICE,
-      accessible: Keychain.ACCESSIBLE.WHEN_UNLOCKED,
+      accessible: Keychain.ACCESSIBLE.WHEN_PASSCODE_SET_THIS_DEVICE_ONLY,
+      securityLevel: Keychain.SECURITY_LEVEL.SECURE_HARDWARE,
     });
     setAuthState(newToken, newUsername);
   }, []);
@@ -102,6 +125,13 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     await Keychain.resetGenericPassword({ service: TOKEN_SERVICE });
     clearAuthState();
   }, []);
+
+  useEffect(() => {
+    setGlobalSignOutHandler(signOut);
+    return () => {
+      setGlobalSignOutHandler(null);
+    };
+  }, [signOut]);
 
   const value: AuthContextData = useMemo(
     () => ({
