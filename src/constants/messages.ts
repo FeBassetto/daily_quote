@@ -9,11 +9,18 @@ export const AUTH_MESSAGES = {
   TERMS_LINK: "Termos de Uso",
   TERMS_AND: "e",
   PRIVACY_LINK: "Política de Privacidade",
+  CREATE_ACCOUNT_TITLE: "Criar conta",
+  CREATE_ACCOUNT_SUBTITLE: "Cadastre-se para receber mensagens diárias inspiradoras",
+  REGISTER_BUTTON: "Cadastrar",
+  ALREADY_HAVE_ACCOUNT: "Já tem uma conta?",
+  LOGIN_LINK: "Entrar",
 } as const;
 
 export const FORM_PLACEHOLDERS = {
   USERNAME: "Usuário",
   PASSWORD: "••••••••",
+  EMAIL: "seu@email.com",
+  CONFIRM_PASSWORD: "••••••••",
 } as const;
 
 export const ERROR_MESSAGES = {
@@ -36,6 +43,8 @@ export const SUCCESS_MESSAGES = {
   WELCOME: "Bem-vindo!",
   LOGOUT_TITLE: "Logout realizado",
   QUOTE_COPIED: "Frase copiada!",
+  REGISTER_SUCCESS: "Conta criada com sucesso!",
+  REGISTER_TITLE: "Cadastro realizado",
 } as const;
 
 export const INFO_MESSAGES = {

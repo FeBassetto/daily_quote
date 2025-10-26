@@ -1,4 +1,5 @@
 import { showErrorToast } from "@utils/errorHandler";
+import type { AxiosInstance } from "axios";
 import axios from "axios";
 import * as Keychain from "react-native-keychain";
 
@@ -9,10 +10,7 @@ jest.mock("@utils/errorHandler");
 const mockedAxios = axios as jest.Mocked<typeof axios>;
 
 describe("Axios Configuration", () => {
-  let responseInterceptor: [
-    (response: unknown) => unknown,
-    (error: unknown) => Promise<unknown>
-  ];
+  let responseInterceptor: [(response: unknown) => unknown, (error: unknown) => Promise<unknown>];
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -26,7 +24,7 @@ describe("Axios Configuration", () => {
       },
     };
 
-    mockedAxios.create = jest.fn(() => mockInstance as any);
+    mockedAxios.create = jest.fn(() => mockInstance as unknown as AxiosInstance);
 
     jest.isolateModules(() => {
       require("../axios");
@@ -34,7 +32,7 @@ describe("Axios Configuration", () => {
 
     responseInterceptor = mockUse.mock.calls[0] as [
       (response: unknown) => unknown,
-      (error: unknown) => Promise<unknown>
+      (error: unknown) => Promise<unknown>,
     ];
   });
 
@@ -51,9 +49,9 @@ describe("Axios Configuration", () => {
     it("should set correct content type header", () => {
       const createCall = mockedAxios.create.mock.calls[0]?.[0];
       if (createCall?.headers && typeof createCall.headers === "object") {
-        expect(
-          (createCall.headers as Record<string, string>)["Content-Type"]
-        ).toBe("application/json");
+        expect((createCall.headers as Record<string, string>)["Content-Type"]).toBe(
+          "application/json",
+        );
       }
     });
   });
@@ -80,7 +78,7 @@ describe("Axios Configuration", () => {
 
       expect(showErrorToast).toHaveBeenCalledWith(
         "Sua sessão foi encerrada. Por favor, faça login novamente.",
-        "Sessão expirada"
+        "Sessão expirada",
       );
 
       expect(Keychain.resetGenericPassword).toHaveBeenCalledWith({
