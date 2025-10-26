@@ -47,7 +47,6 @@ jest.mock("react-native-haptic-feedback", () => ({
   trigger: jest.fn(),
 }));
 
-// Mock react-native-deck-swiper with virtual flag
 jest.mock(
   "react-native-deck-swiper",
   () => {
@@ -73,7 +72,6 @@ jest.mock(
   { virtual: true },
 );
 
-// Mock lucide-react-native icons
 jest.mock("lucide-react-native", () => {
   const React = require("react");
   const { View } = require("react-native");
@@ -96,7 +94,6 @@ jest.mock("lucide-react-native", () => {
   };
 });
 
-// Mock @react-navigation
 jest.mock("@react-navigation/native", () => ({
   ...jest.requireActual("@react-navigation/native"),
   useNavigation: () => ({

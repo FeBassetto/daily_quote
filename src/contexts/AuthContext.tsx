@@ -1,11 +1,4 @@
-import {
-  createContext,
-  type ReactNode,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import { createContext, type ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 import { AppState } from "react-native";
 import RNBootSplash from "react-native-bootsplash";
 import * as Keychain from "react-native-keychain";

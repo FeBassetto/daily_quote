@@ -32,9 +32,7 @@ const updateQuoteInState = (
     const exists = prev.some((q) => q.id === quoteId);
     if (!exists) return prev;
 
-    return prev.map((q) =>
-      q.id === quoteId ? { ...q, text: quoteText, loading: false } : q,
-    );
+    return prev.map((q) => (q.id === quoteId ? { ...q, text: quoteText, loading: false } : q));
   });
 };
 
@@ -75,8 +73,7 @@ export const useQuoteManager = (): UseQuoteManagerReturn => {
     return Math.min(exponentialDelay + jitter, MAX_BACKOFF_DELAY_MS);
   };
 
-  const delay = (ms: number) =>
-    new Promise<void>((resolve) => setTimeout(resolve, ms));
+  const delay = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
 
   const fetchQuoteWithRetry = async (): Promise<string | null> => {
     for (let attempt = 1; attempt <= MAX_RETRY_ATTEMPTS; attempt++) {

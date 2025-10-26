@@ -25,14 +25,12 @@ describe("AuthContext", () => {
     jest.useFakeTimers();
 
     appStateListener = null;
-    jest
-      .spyOn(AppState, "addEventListener")
-      .mockImplementation((_, listener) => {
-        appStateListener = listener as (state: string) => void;
-        return {
-          remove: jest.fn(),
-        };
-      });
+    jest.spyOn(AppState, "addEventListener").mockImplementation((_, listener) => {
+      appStateListener = listener as (state: string) => void;
+      return {
+        remove: jest.fn(),
+      };
+    });
   });
 
   afterEach(() => {
@@ -65,9 +63,7 @@ describe("AuthContext", () => {
         service: "auth_token",
       };
 
-      (Keychain.getGenericPassword as jest.Mock).mockResolvedValue(
-        mockCredentials,
-      );
+      (Keychain.getGenericPassword as jest.Mock).mockResolvedValue(mockCredentials);
 
       const { getByTestId } = render(
         <AuthProvider>
@@ -83,9 +79,7 @@ describe("AuthContext", () => {
     });
 
     it("should handle errors when loading credentials", async () => {
-      (Keychain.getGenericPassword as jest.Mock).mockRejectedValue(
-        new Error("Keychain error"),
-      );
+      (Keychain.getGenericPassword as jest.Mock).mockRejectedValue(new Error("Keychain error"));
 
       const { getByTestId } = render(
         <AuthProvider>
@@ -105,9 +99,7 @@ describe("AuthContext", () => {
       (Keychain.getGenericPassword as jest.Mock).mockResolvedValue(false);
       (Keychain.setGenericPassword as jest.Mock).mockResolvedValue(true);
 
-      let signInFn:
-        | ((token: string, username: string) => Promise<void>)
-        | null = null;
+      let signInFn: ((token: string, username: string) => Promise<void>) | null = null;
 
       const TestComponentWithSignIn = () => {
         const auth = React.useContext(AuthContext);
@@ -129,14 +121,11 @@ describe("AuthContext", () => {
         await signInFn?.("new-token", "newuser");
       });
 
-      expect(Keychain.setGenericPassword).toHaveBeenCalledWith(
-        "newuser",
-        "new-token",
-        {
-          service: "auth_token",
-          accessible: Keychain.ACCESSIBLE.WHEN_UNLOCKED,
-        },
-      );
+      expect(Keychain.setGenericPassword).toHaveBeenCalledWith("newuser", "new-token", {
+        service: "auth_token",
+        accessible: Keychain.ACCESSIBLE.WHEN_PASSCODE_SET_THIS_DEVICE_ONLY,
+        securityLevel: Keychain.SECURITY_LEVEL.SECURE_HARDWARE,
+      });
 
       await waitFor(() => {
         expect(getByTestId("token").props.children).toBe("new-token");
@@ -154,9 +143,7 @@ describe("AuthContext", () => {
         service: "auth_token",
       };
 
-      (Keychain.getGenericPassword as jest.Mock).mockResolvedValue(
-        mockCredentials,
-      );
+      (Keychain.getGenericPassword as jest.Mock).mockResolvedValue(mockCredentials);
       (Keychain.resetGenericPassword as jest.Mock).mockResolvedValue(true);
 
       let signOutFn: (() => Promise<void>) | null = null;
@@ -225,9 +212,7 @@ describe("AuthContext", () => {
         service: "auth_token",
       };
 
-      (Keychain.getGenericPassword as jest.Mock).mockResolvedValue(
-        mockCredentials,
-      );
+      (Keychain.getGenericPassword as jest.Mock).mockResolvedValue(mockCredentials);
 
       const { getByTestId } = render(
         <AuthProvider>
