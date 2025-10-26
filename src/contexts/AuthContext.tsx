@@ -108,7 +108,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const signIn = useCallback(async (newToken: string, newUsername: string) => {
     await Keychain.setGenericPassword(newUsername, newToken, {
       service: TOKEN_SERVICE,
-      accessible: Keychain.ACCESSIBLE.WHEN_UNLOCKED,
+      accessible: Keychain.ACCESSIBLE.WHEN_PASSCODE_SET_THIS_DEVICE_ONLY,
+      securityLevel: Keychain.SECURITY_LEVEL.SECURE_HARDWARE,
     });
     setAuthState(newToken, newUsername);
   }, []);
