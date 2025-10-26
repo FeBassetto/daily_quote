@@ -9,8 +9,8 @@ import {
 } from "@constants/messages";
 import { colors } from "@constants/theme";
 import { zodResolver } from "@hookform/resolvers/zod";
+import type { NavigationProp } from "@models/navigation";
 import { useNavigation } from "@react-navigation/native";
-import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { showInfoToast, showSuccessToast } from "@utils/errorHandler";
 import { type RegisterFormData, registerSchema } from "@utils/registerValidation";
 import { Eye, EyeOff, Lock, Mail, User } from "lucide-react-native";
@@ -28,14 +28,6 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { LoginFooter } from "../Login/components/LoginFooter/LoginFooter";
 import { styles } from "./styles.register";
-
-type RootStackParamList = {
-  Login: undefined;
-  Register: undefined;
-  DailyQuote: undefined;
-};
-
-type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 export const RegisterScreen = () => {
   const navigation = useNavigation<NavigationProp>();
