@@ -3,20 +3,17 @@ import { Input } from "@components/Input/Input";
 import { Logo } from "@components/Logo/Logo";
 import {
   AUTH_MESSAGES,
-  ERROR_MESSAGES,
   FORM_PLACEHOLDERS,
   INFO_MESSAGES,
   SUCCESS_MESSAGES,
 } from "@constants/messages";
 import { colors } from "@constants/theme";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useAuth } from "@hooks/useAuth";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { authAPI } from "@services/auth";
-import { showErrorToast, showInfoToast, showSuccessToast } from "@utils/errorHandler";
-import { type LoginFormData, loginSchema } from "@utils/loginValidation";
-import { Eye, EyeOff, Lock, User } from "lucide-react-native";
+import { showInfoToast, showSuccessToast } from "@utils/errorHandler";
+import { type RegisterFormData, registerSchema } from "@utils/registerValidation";
+import { Eye, EyeOff, Lock, Mail, User } from "lucide-react-native";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import {
@@ -29,8 +26,8 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { LoginFooter } from "./components/LoginFooter/LoginFooter";
-import { styles } from "./styles.login";
+import { LoginFooter } from "../Login/components/LoginFooter/LoginFooter";
+import { styles } from "./styles.register";
 
 type RootStackParamList = {
   Login: undefined;
@@ -40,34 +37,34 @@ type RootStackParamList = {
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
-export const LoginScreen = () => {
+export const RegisterScreen = () => {
   const navigation = useNavigation<NavigationProp>();
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const { signIn } = useAuth();
 
-  const { control, handleSubmit } = useForm<LoginFormData>({
-    resolver: zodResolver(loginSchema),
+  const { control, handleSubmit, reset } = useForm<RegisterFormData>({
+    resolver: zodResolver(registerSchema),
     mode: "onSubmit",
     defaultValues: {
       username: "",
+      email: "",
       password: "",
+      confirmPassword: "",
     },
   });
 
-  const onSubmit = async (data: LoginFormData) => {
+  const onSubmit = async () => {
     setIsLoading(true);
     try {
-      const response = await authAPI.login(data);
+      await new Promise<void>((resolve) => setTimeout(resolve, 1500));
 
-      if (response.token) {
-        await signIn(response.token, data.username);
-        showSuccessToast(SUCCESS_MESSAGES.LOGIN_SUCCESS, SUCCESS_MESSAGES.WELCOME);
-      } else {
-        showErrorToast(ERROR_MESSAGES.INVALID_CREDENTIALS, "Erro no Login");
-      }
-    } catch {
-      showErrorToast(ERROR_MESSAGES.NETWORK_ERROR, "Erro no Login");
+      showSuccessToast(SUCCESS_MESSAGES.REGISTER_SUCCESS, SUCCESS_MESSAGES.REGISTER_TITLE);
+
+      reset();
+      setShowPassword(false);
+      setShowConfirmPassword(false);
+      navigation.navigate("Login");
     } finally {
       setIsLoading(false);
     }
@@ -91,8 +88,8 @@ export const LoginScreen = () => {
         >
           <View style={styles.header}>
             <Logo size="large" style={styles.logo} />
-            <Text style={styles.title}>{AUTH_MESSAGES.WELCOME_BACK}</Text>
-            <Text style={styles.subtitle}>{AUTH_MESSAGES.WELCOME_SUBTITLE}</Text>
+            <Text style={styles.title}>{AUTH_MESSAGES.CREATE_ACCOUNT_TITLE}</Text>
+            <Text style={styles.subtitle}>{AUTH_MESSAGES.CREATE_ACCOUNT_SUBTITLE}</Text>
           </View>
 
           <View style={styles.form}>
@@ -117,6 +114,27 @@ export const LoginScreen = () => {
 
             <Controller
               control={control}
+              name="email"
+              render={({ field, fieldState: { error } }) => (
+                <Input
+                  value={field.value}
+                  onChangeText={field.onChange}
+                  onBlur={field.onBlur}
+                  error={error?.message}
+                  placeholder={FORM_PLACEHOLDERS.EMAIL}
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                  autoComplete="email"
+                  textContentType="emailAddress"
+                  leftIcon={<Mail size={20} color={colors.text.tertiary} />}
+                  editable={!isLoading}
+                  containerStyle={styles.inputSpacing}
+                />
+              )}
+            />
+
+            <Controller
+              control={control}
               name="password"
               render={({ field, fieldState: { error } }) => (
                 <Input
@@ -127,8 +145,8 @@ export const LoginScreen = () => {
                   placeholder={FORM_PLACEHOLDERS.PASSWORD}
                   secureTextEntry={!showPassword}
                   autoCapitalize="none"
-                  autoComplete="password"
-                  textContentType="password"
+                  autoComplete="password-new"
+                  textContentType="newPassword"
                   leftIcon={<Lock size={20} color={colors.text.tertiary} />}
                   rightIcon={
                     <TouchableOpacity
@@ -144,42 +162,61 @@ export const LoginScreen = () => {
                     </TouchableOpacity>
                   }
                   editable={!isLoading}
-                  containerStyle={styles.passwordInput}
+                  containerStyle={styles.inputSpacing}
                 />
               )}
             />
 
-            <TouchableOpacity
-              style={styles.forgotPassword}
-              activeOpacity={0.7}
-              onPress={handleComingSoon}
-            >
-              <Text style={styles.forgotPasswordText}>{AUTH_MESSAGES.FORGOT_PASSWORD}</Text>
-            </TouchableOpacity>
+            <Controller
+              control={control}
+              name="confirmPassword"
+              render={({ field, fieldState: { error } }) => (
+                <Input
+                  value={field.value}
+                  onChangeText={field.onChange}
+                  onBlur={field.onBlur}
+                  error={error?.message}
+                  placeholder={FORM_PLACEHOLDERS.CONFIRM_PASSWORD}
+                  secureTextEntry={!showConfirmPassword}
+                  autoCapitalize="none"
+                  autoComplete="password-new"
+                  textContentType="newPassword"
+                  leftIcon={<Lock size={20} color={colors.text.tertiary} />}
+                  rightIcon={
+                    <TouchableOpacity
+                      onPress={() => setShowConfirmPassword(!showConfirmPassword)}
+                      activeOpacity={0.7}
+                      disabled={isLoading}
+                    >
+                      {showConfirmPassword ? (
+                        <EyeOff size={20} color={colors.text.tertiary} />
+                      ) : (
+                        <Eye size={20} color={colors.text.tertiary} />
+                      )}
+                    </TouchableOpacity>
+                  }
+                  editable={!isLoading}
+                  containerStyle={styles.inputSpacing}
+                />
+              )}
+            />
 
             <Button
-              title={AUTH_MESSAGES.LOGIN_BUTTON}
+              title={AUTH_MESSAGES.REGISTER_BUTTON}
               onPress={handleSubmit(onSubmit)}
               loading={isLoading}
               disabled={isLoading}
               fullWidth
               size="large"
-              style={styles.loginButton}
+              style={styles.registerButton}
             />
 
-            <View style={styles.divider}>
-              <View style={styles.dividerLine} />
-              <Text style={styles.dividerText}>{AUTH_MESSAGES.DIVIDER_OR}</Text>
-              <View style={styles.dividerLine} />
+            <View style={styles.loginContainer}>
+              <Text style={styles.loginText}>{AUTH_MESSAGES.ALREADY_HAVE_ACCOUNT}</Text>
+              <TouchableOpacity activeOpacity={0.7} onPress={() => navigation.navigate("Login")}>
+                <Text style={styles.loginLink}>{AUTH_MESSAGES.LOGIN_LINK}</Text>
+              </TouchableOpacity>
             </View>
-
-            <Button
-              title={AUTH_MESSAGES.CREATE_ACCOUNT}
-              variant="outline"
-              fullWidth
-              size="large"
-              onPress={() => navigation.navigate("Register")}
-            />
           </View>
 
           <LoginFooter onTermsPress={handleComingSoon} onPrivacyPress={handleComingSoon} />

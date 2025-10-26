@@ -4,11 +4,25 @@ Um aplicativo React Native que entrega frases inspiracionais diárias para motiv
 
 ## Funcionalidades
 
-- Login de usuário
-- Visualização de frase do dia
-- Navegação entre frases passadas (swipe)
-- Deep linking para acesso direto à frase do dia
-- Interface limpa e moderna
+- **Login de usuário** - Autenticação via API
+- **Tela de Registro** - ⚠️ Apenas demonstrativa (não funcional)
+- **Visualização de frase do dia** - Frases motivacionais diárias
+- **Navegação entre frases** - Swipe para visualizar frases passadas
+- **Deep linking** - Acesso direto à frase do dia via URL
+- **Interface moderna** - Design limpo e intuitivo
+- **Compartilhamento** - Compartilhe suas frases favoritas
+- **Clipboard** - Copie frases facilmente
+
+## ⚠️ Importante - Tela de Registro
+
+A tela de **registro de conta é apenas demonstrativa** e serve para fins de UI/UX. Ela **não cria contas reais** nem permite fazer login com credenciais registradas.
+
+- ✅ Validação de formulário funcional (Zod + React Hook Form)
+- ✅ Feedback visual e animações
+- ❌ Não envia dados para API
+- ❌ Não cria contas reais
+
+Para testar o aplicativo, use as credenciais de teste fornecidas abaixo.
 
 ## Credenciais de Teste
 
@@ -19,11 +33,108 @@ Para testar o aplicativo, use as seguintes credenciais:
 
 ## Stack Tecnológica
 
+### Core
 - **React Native** 0.82.1
-- **TypeScript** 5.8
-- **React Navigation** - Navegação
-- **Biome** - Linting e formatação
-- **React Native Bootsplash** - Splash screen nativa
+- **TypeScript** 5.8.3
+- **React** 19.1.1
+
+### Navegação e Estado
+- **React Navigation** 7.x (Native + Native Stack)
+- **React Hook Form** 7.65.0 - Gerenciamento de formulários
+- **Zod** 4.1.12 - Validação de schemas
+
+### UI e Componentes
+- **Lucide React Native** 0.547.0 - Ícones
+- **React Native Deck Swiper** 2.0.19 - Swipe de cards
+- **React Native Toast Message** 2.3.3 - Notificações
+- **React Native Haptic Feedback** 2.3.3 - Feedback tátil
+- **React Native Safe Area Context** 5.5.2 - Safe areas
+
+### Utilitários
+- **Axios** 1.12.2 - Cliente HTTP
+- **React Native Keychain** 10.0.0 - Armazenamento seguro
+- **React Native Share** 12.2.0 - Compartilhamento nativo
+- **React Native Clipboard** 1.16.3 - Clipboard
+
+### Ferramentas de Desenvolvimento
+- **Biome** 2.3.0 - Linting e formatação
+- **Jest** 29.6.3 - Framework de testes
+- **Testing Library** - Testes de componentes React Native
+
+## Testes
+
+O projeto possui uma suíte de testes abrangente com **112 testes** distribuídos em **13 arquivos**.
+
+### Estrutura de Testes
+
+```
+__tests__/
+└── App.test.tsx                    # Teste do componente principal
+
+src/
+├── components/__tests__/
+│   ├── Button.test.tsx            # Testes do componente Button
+│   └── Input.test.tsx             # Testes do componente Input
+│
+├── contexts/__tests__/
+│   └── AuthContext.test.tsx       # Testes do contexto de autenticação
+│
+├── services/__tests__/
+│   ├── axios.test.ts              # Testes da configuração do Axios
+│   ├── auth.test.ts               # Testes do serviço de autenticação
+│   ├── quote.test.ts              # Testes do serviço de frases
+│   └── integration/
+│       ├── auth.integration.test.ts              # Testes de integração de auth
+│       ├── quote.integration.test.ts             # Testes de integração de quotes
+│       └── complete-flow.integration.test.ts     # Testes de fluxo completo
+│
+└── utils/__tests__/
+    ├── errorHandler.test.ts       # Testes do manipulador de erros
+    ├── loginValidation.test.ts    # Testes de validação de login
+    └── quote.test.ts              # Testes de utilitários de frases
+```
+
+### Executar Testes
+
+```bash
+# Executar todos os testes
+npm test
+
+# Executar testes em modo watch
+npm test -- --watch
+
+# Executar testes com cobertura
+npm test -- --coverage
+
+# Executar um arquivo específico
+npm test -- Button.test.tsx
+
+# Executar testes em modo verbose
+npm test -- --verbose
+```
+
+### Cobertura de Testes
+
+O projeto mantém um threshold mínimo de cobertura configurado em `jest.config.js`:
+
+- **Branches**: 70%
+- **Functions**: 70%
+- **Lines**: 70%
+- **Statements**: 70%
+
+Para visualizar o relatório de cobertura detalhado:
+
+```bash
+npm test -- --coverage
+```
+
+### Tipos de Testes
+
+1. **Testes Unitários** - Componentes isolados (Button, Input)
+2. **Testes de Contexto** - AuthContext e gerenciamento de estado
+3. **Testes de Serviços** - APIs e cliente HTTP
+4. **Testes de Integração** - Fluxos completos de autenticação e quotes
+5. **Testes de Utilitários** - Validações e helpers
 
 ## Pré-requisitos
 
@@ -143,17 +254,18 @@ adb shell am start -W -a android.intent.action.VIEW -d "dailyquote://quoteoftheD
 # Lint
 npm run lint
 
-# Fix problemas de lint
+# Fix problemas de lint automaticamente
 npm run lint:fix
 
 # Formatar código
 npm run lint:format
 ```
 
-### Testes
+### TypeScript
 
 ```bash
-npm test
+# Verificar tipos
+npx tsc --noEmit
 ```
 
 ## Estrutura do Projeto
@@ -162,19 +274,46 @@ npm test
 daily_quote/
 ├── android/                    # Código nativo Android
 ├── ios/                        # Código nativo iOS
+├── __tests__/                  # Testes do componente principal
 ├── src/
+│   ├── assets/                # Imagens, SVGs e assets estáticos
 │   ├── components/            # Componentes reutilizáveis
-│   ├── constants/             # Constantes e tema
+│   │   ├── Button/           # Componente de botão
+│   │   ├── Input/            # Componente de input
+│   │   ├── Logo/             # Componente de logo
+│   │   └── __tests__/        # Testes de componentes
+│   ├── constants/             # Constantes, tema e mensagens
+│   ├── contexts/              # Contextos React (AuthContext)
+│   │   └── __tests__/        # Testes de contextos
+│   ├── hooks/                 # Custom hooks
 │   ├── navigation/            # Configuração de navegação
 │   ├── screens/               # Telas do app
 │   │   ├── Login/            # Tela de login
+│   │   ├── Register/         # Tela de registro (demonstrativa)
 │   │   └── DailyQuote/       # Tela principal com frases
-│   ├── services/             # Serviços (API, etc)
-│   └── types/                # Tipos TypeScript
-├── assets/                    # Imagens, fontes e assets
+│   ├── services/             # Serviços (API, HTTP client)
+│   │   └── __tests__/        # Testes de serviços e integração
+│   ├── types/                # Tipos TypeScript
+│   └── utils/                # Utilitários e helpers
+│       └── __tests__/        # Testes de utilitários
 ├── App.tsx                    # Componente principal
-└── ...
+├── jest.config.js            # Configuração do Jest
+├── jest.setup.js             # Setup dos testes
+└── package.json              # Dependências e scripts
 ```
+
+## Scripts Disponíveis
+
+| Script | Descrição |
+|--------|-----------|
+| `npm start` | Inicia o Metro bundler |
+| `npm run ios` | Executa no iOS |
+| `npm run android` | Executa no Android |
+| `npm run android:apk` | Gera APK de produção para Android |
+| `npm run lint` | Executa o linter |
+| `npm run lint:fix` | Corrige problemas de lint automaticamente |
+| `npm run lint:format` | Formata o código |
+| `npm test` | Executa os testes |
 
 ## Troubleshooting
 
@@ -205,25 +344,26 @@ npm start -- --reset-cache
 Se o Metro não iniciar corretamente:
 
 ```bash
-# Limpar cache
+# Limpar cache do Metro
 npm start -- --reset-cache
 
-# Ou
+# Ou limpar tudo
 watchman watch-del-all
 rm -rf node_modules
 npm install
 ```
 
-## Scripts Disponíveis
+### Testes Falhando
 
-- `npm start` - Inicia o Metro bundler
-- `npm run ios` - Executa no iOS
-- `npm run android` - Executa no Android
-- `npm run android:apk` - Gera APK de produção para Android
-- `npm run lint` - Executa o linter
-- `npm run lint:fix` - Corrige problemas de lint
-- `npm run lint:format` - Formata o código
-- `npm test` - Executa os testes
+Se os testes falharem:
+
+```bash
+# Limpar cache do Jest
+npm test -- --clearCache
+
+# Executar testes novamente
+npm test
+```
 
 ## Licença
 
