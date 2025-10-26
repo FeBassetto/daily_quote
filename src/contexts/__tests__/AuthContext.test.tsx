@@ -1,6 +1,6 @@
 import { act, render, waitFor } from "@testing-library/react-native";
 import React from "react";
-import { Text } from "react-native";
+import { AppState, Text } from "react-native";
 import RNBootSplash from "react-native-bootsplash";
 import * as Keychain from "react-native-keychain";
 import { AuthContext, AuthProvider } from "../AuthContext";
@@ -18,14 +18,27 @@ const TestComponent = () => {
 };
 
 describe("AuthContext", () => {
+  let appStateListener: ((state: string) => void) | null = null;
+
   beforeEach(() => {
     jest.clearAllMocks();
     jest.useFakeTimers();
+
+    appStateListener = null;
+    jest
+      .spyOn(AppState, "addEventListener")
+      .mockImplementation((_, listener) => {
+        appStateListener = listener as (state: string) => void;
+        return {
+          remove: jest.fn(),
+        };
+      });
   });
 
   afterEach(() => {
     jest.runOnlyPendingTimers();
     jest.useRealTimers();
+    jest.restoreAllMocks();
   });
 
   describe("Initial state", () => {
@@ -52,7 +65,9 @@ describe("AuthContext", () => {
         service: "auth_token",
       };
 
-      (Keychain.getGenericPassword as jest.Mock).mockResolvedValue(mockCredentials);
+      (Keychain.getGenericPassword as jest.Mock).mockResolvedValue(
+        mockCredentials,
+      );
 
       const { getByTestId } = render(
         <AuthProvider>
@@ -68,7 +83,9 @@ describe("AuthContext", () => {
     });
 
     it("should handle errors when loading credentials", async () => {
-      (Keychain.getGenericPassword as jest.Mock).mockRejectedValue(new Error("Keychain error"));
+      (Keychain.getGenericPassword as jest.Mock).mockRejectedValue(
+        new Error("Keychain error"),
+      );
 
       const { getByTestId } = render(
         <AuthProvider>
@@ -88,7 +105,9 @@ describe("AuthContext", () => {
       (Keychain.getGenericPassword as jest.Mock).mockResolvedValue(false);
       (Keychain.setGenericPassword as jest.Mock).mockResolvedValue(true);
 
-      let signInFn: ((token: string, username: string) => Promise<void>) | null = null;
+      let signInFn:
+        | ((token: string, username: string) => Promise<void>)
+        | null = null;
 
       const TestComponentWithSignIn = () => {
         const auth = React.useContext(AuthContext);
@@ -110,10 +129,14 @@ describe("AuthContext", () => {
         await signInFn?.("new-token", "newuser");
       });
 
-      expect(Keychain.setGenericPassword).toHaveBeenCalledWith("newuser", "new-token", {
-        service: "auth_token",
-        accessible: Keychain.ACCESSIBLE.WHEN_UNLOCKED,
-      });
+      expect(Keychain.setGenericPassword).toHaveBeenCalledWith(
+        "newuser",
+        "new-token",
+        {
+          service: "auth_token",
+          accessible: Keychain.ACCESSIBLE.WHEN_UNLOCKED,
+        },
+      );
 
       await waitFor(() => {
         expect(getByTestId("token").props.children).toBe("new-token");
@@ -131,7 +154,9 @@ describe("AuthContext", () => {
         service: "auth_token",
       };
 
-      (Keychain.getGenericPassword as jest.Mock).mockResolvedValue(mockCredentials);
+      (Keychain.getGenericPassword as jest.Mock).mockResolvedValue(
+        mockCredentials,
+      );
       (Keychain.resetGenericPassword as jest.Mock).mockResolvedValue(true);
 
       let signOutFn: (() => Promise<void>) | null = null;
@@ -193,14 +218,16 @@ describe("AuthContext", () => {
   });
 
   describe("Auth state monitoring", () => {
-    it("should clear state when credentials are removed externally", async () => {
+    it("should clear state when credentials are removed externally and app becomes active", async () => {
       const mockCredentials = {
         username: "testuser",
         password: "test-token",
         service: "auth_token",
       };
 
-      (Keychain.getGenericPassword as jest.Mock).mockResolvedValue(mockCredentials);
+      (Keychain.getGenericPassword as jest.Mock).mockResolvedValue(
+        mockCredentials,
+      );
 
       const { getByTestId } = render(
         <AuthProvider>
@@ -215,7 +242,9 @@ describe("AuthContext", () => {
       (Keychain.getGenericPassword as jest.Mock).mockResolvedValue(false);
 
       await act(async () => {
-        jest.advanceTimersByTime(1000);
+        if (appStateListener) {
+          appStateListener("active");
+        }
         await Promise.resolve();
       });
 

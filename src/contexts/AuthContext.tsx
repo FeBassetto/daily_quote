@@ -1,4 +1,12 @@
-import { createContext, type ReactNode, useCallback, useEffect, useMemo, useState } from "react";
+import {
+  createContext,
+  type ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
+import { AppState } from "react-native";
 import RNBootSplash from "react-native-bootsplash";
 import * as Keychain from "react-native-keychain";
 
@@ -86,8 +94,15 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       }
     };
 
-    const interval = setInterval(checkAuthState, 1000);
-    return () => clearInterval(interval);
+    const subscription = AppState.addEventListener("change", (nextAppState) => {
+      if (nextAppState === "active") {
+        checkAuthState();
+      }
+    });
+
+    return () => {
+      subscription.remove();
+    };
   }, [isLoading, token]);
 
   const signIn = useCallback(async (newToken: string, newUsername: string) => {
