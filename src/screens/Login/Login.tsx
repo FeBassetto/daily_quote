@@ -11,8 +11,8 @@ import {
 import { colors } from "@constants/theme";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAuth } from "@hooks/useAuth";
+import type { NavigationProp } from "@models/navigation";
 import { useNavigation } from "@react-navigation/native";
-import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { authAPI } from "@services/auth";
 import { showErrorToast, showInfoToast, showSuccessToast } from "@utils/errorHandler";
 import { type LoginFormData, loginSchema } from "@utils/loginValidation";
@@ -31,14 +31,6 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { LoginFooter } from "./components/LoginFooter/LoginFooter";
 import { styles } from "./styles.login";
-
-type RootStackParamList = {
-  Login: undefined;
-  Register: undefined;
-  DailyQuote: undefined;
-};
-
-type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 export const LoginScreen = () => {
   const navigation = useNavigation<NavigationProp>();
@@ -152,7 +144,7 @@ export const LoginScreen = () => {
             <TouchableOpacity
               style={styles.forgotPassword}
               activeOpacity={0.7}
-              onPress={handleComingSoon}
+              onPress={() => navigation.navigate("ForgotPassword")}
             >
               <Text style={styles.forgotPasswordText}>{AUTH_MESSAGES.FORGOT_PASSWORD}</Text>
             </TouchableOpacity>

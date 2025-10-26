@@ -6,6 +6,7 @@ Um aplicativo React Native que entrega frases inspiracionais diárias para motiv
 
 - **Login de usuário** - Autenticação via API
 - **Tela de Registro** - ⚠️ Apenas demonstrativa (não funcional)
+- **Tela de Esqueci a Senha** - ⚠️ Apenas demonstrativa (não funcional)
 - **Visualização de frase do dia** - Frases motivacionais diárias
 - **Navegação entre frases** - Swipe para visualizar frases passadas
 - **Deep linking** - Acesso direto à frase do dia via URL
@@ -13,14 +14,21 @@ Um aplicativo React Native que entrega frases inspiracionais diárias para motiv
 - **Compartilhamento** - Compartilhe suas frases favoritas
 - **Clipboard** - Copie frases facilmente
 
-## ⚠️ Importante - Tela de Registro
+## ⚠️ Importante - Telas Demonstrativas
 
-A tela de **registro de conta é apenas demonstrativa** e serve para fins de UI/UX. Ela **não cria contas reais** nem permite fazer login com credenciais registradas.
+As telas de **registro de conta** e **recuperação de senha são apenas demonstrativas** e servem para fins de UI/UX. Elas **não criam contas reais** nem enviam e-mails de recuperação.
 
+### Tela de Registro
 - ✅ Validação de formulário funcional (Zod + React Hook Form)
 - ✅ Feedback visual e animações
 - ❌ Não envia dados para API
 - ❌ Não cria contas reais
+
+### Tela de Esqueci a Senha
+- ✅ Validação de e-mail funcional (Zod + React Hook Form)
+- ✅ Feedback visual e animações
+- ❌ Não envia e-mails de recuperação
+- ❌ Não altera senhas reais
 
 Para testar o aplicativo, use as credenciais de teste fornecidas abaixo.
 
@@ -290,6 +298,7 @@ daily_quote/
 │   ├── screens/               # Telas do app
 │   │   ├── Login/            # Tela de login
 │   │   ├── Register/         # Tela de registro (demonstrativa)
+│   │   ├── ForgotPassword/   # Tela de esqueci a senha (demonstrativa)
 │   │   └── DailyQuote/       # Tela principal com frases
 │   ├── services/             # Serviços (API, HTTP client)
 │   │   └── __tests__/        # Testes de serviços e integração

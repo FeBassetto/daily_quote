@@ -14,6 +14,11 @@ export const AUTH_MESSAGES = {
   REGISTER_BUTTON: "Cadastrar",
   ALREADY_HAVE_ACCOUNT: "Já tem uma conta?",
   LOGIN_LINK: "Entrar",
+  FORGOT_PASSWORD_TITLE: "Recuperar senha",
+  FORGOT_PASSWORD_SUBTITLE: "Digite seu e-mail para receber instruções de recuperação",
+  SEND_INSTRUCTIONS: "Enviar instruções",
+  BACK_TO_LOGIN: "Voltar ao login",
+  REMEMBER_PASSWORD: "Lembrou sua senha?",
 } as const;
 
 export const FORM_PLACEHOLDERS = {
@@ -45,6 +50,8 @@ export const SUCCESS_MESSAGES = {
   QUOTE_COPIED: "Frase copiada!",
   REGISTER_SUCCESS: "Conta criada com sucesso!",
   REGISTER_TITLE: "Cadastro realizado",
+  FORGOT_PASSWORD_SUCCESS: "Instruções enviadas para seu e-mail!",
+  FORGOT_PASSWORD_TITLE: "E-mail enviado",
 } as const;
 
 export const INFO_MESSAGES = {
